@@ -1,0 +1,12 @@
+{
+  "name": "Libreta de Ofertas",
+  "short_name": "Ofertas",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f5f3",
+  "theme_color": "#1f5f3f",
+  "lang": "es",
+  "icons": [{"src": "icon.png", "sizes": "512x512", "type": "image/png"}]
+}
