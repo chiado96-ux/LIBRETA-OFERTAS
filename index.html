@@ -119,6 +119,24 @@
   .trow.total span:last-child{color:var(--accent);font-weight:700}
   .hint{font-size:12px;color:var(--muted);margin-top:4px}
 
+  /* ---------- Fotos ---------- */
+  .fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:12px}
+  .foto{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#eef0ee;padding:0}
+  .foto img{width:100%;height:100%;object-fit:cover;display:block}
+  .fotobtns{display:flex;gap:10px;flex-wrap:wrap}
+  .fotobtns label,.fotobtns button{flex:1;min-width:140px;height:46px;border:1px solid var(--line);border-radius:12px;background:#fbfbfa;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:500;color:var(--accent);cursor:pointer}
+  .fotobtns label:active,.fotobtns button:active{background:var(--accent-soft)}
+  .fotobtns input{display:none}
+  .fotobtns svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .viewer .sheet{max-width:900px;background:#111}
+  .viewer .top{border-color:#333;color:#fff}
+  .viewer .top .ibtn{background:#222;border-color:#333}
+  .viewer .top .ibtn svg{stroke:#fff}
+  .viewer .body{display:flex;align-items:center;justify-content:center;padding:0;background:#111}
+  .viewer img{max-width:100%;max-height:calc(100vh - 200px);display:block}
+  .viewer .acts{display:flex;gap:10px;padding:12px 16px;background:#111;border-top:1px solid #333}
+  .viewer .acts button{flex:1;height:46px;border-radius:12px;border:1px solid #333;background:#222;color:#fff;font-weight:500}
+  .viewer .acts button.dangerb{color:#ff8a76}
   /* ---------- Modales ---------- */
   .modal{position:fixed;inset:0;z-index:50;background:rgba(27,31,29,.35);display:none;align-items:flex-start;justify-content:center;padding:calc(env(safe-area-inset-top) + 24px) 16px 16px}
   .modal.open{display:flex}
@@ -245,6 +263,24 @@
   .trow.total span:last-child{color:var(--accent);font-weight:700}
   .hint{font-size:12px;color:var(--muted);margin-top:4px}
 
+  /* ---------- Fotos ---------- */
+  .fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:12px}
+  .foto{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#eef0ee;padding:0}
+  .foto img{width:100%;height:100%;object-fit:cover;display:block}
+  .fotobtns{display:flex;gap:10px;flex-wrap:wrap}
+  .fotobtns label,.fotobtns button{flex:1;min-width:140px;height:46px;border:1px solid var(--line);border-radius:12px;background:#fbfbfa;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:500;color:var(--accent);cursor:pointer}
+  .fotobtns label:active,.fotobtns button:active{background:var(--accent-soft)}
+  .fotobtns input{display:none}
+  .fotobtns svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .viewer .sheet{max-width:900px;background:#111}
+  .viewer .top{border-color:#333;color:#fff}
+  .viewer .top .ibtn{background:#222;border-color:#333}
+  .viewer .top .ibtn svg{stroke:#fff}
+  .viewer .body{display:flex;align-items:center;justify-content:center;padding:0;background:#111}
+  .viewer img{max-width:100%;max-height:calc(100vh - 200px);display:block}
+  .viewer .acts{display:flex;gap:10px;padding:12px 16px;background:#111;border-top:1px solid #333}
+  .viewer .acts button{flex:1;height:46px;border-radius:12px;border:1px solid #333;background:#222;color:#fff;font-weight:500}
+  .viewer .acts button.dangerb{color:#ff8a76}
   /* ---------- Modales ---------- */
   .modal{position:fixed;inset:0;z-index:50;background:rgba(27,31,29,.35);display:none;align-items:flex-start;justify-content:center;padding:calc(env(safe-area-inset-top) + 24px) 16px 16px}
   .modal.open{display:flex}
@@ -316,7 +352,7 @@
       <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button>
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
-    <div class="lfoot">v1.5</div>
+    <div class="lfoot">v1.6</div>
   </div>
 </div>
 <header>
@@ -387,7 +423,26 @@
     <div class="f"><textarea id="obs" data-k="obs" placeholder="Notas de la visita, condiciones, horarios de acceso…"></textarea></div>
     <div class="hint" id="meta"></div>
   </section>
+
+  <section class="card">
+    <h2>Fotos <span class="unit" id="nFotos"></span></h2>
+    <div class="fotos" id="fotos"></div>
+    <div class="fotobtns">
+      <label><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg> Hacer foto<input type="file" accept="image/*" capture="environment" id="fCam"></label>
+      <label><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg> Elegir de la galería<input type="file" accept="image/*" multiple id="fGal"></label>
+    </div>
+    <div class="hint">Las fotos se guardan en este dispositivo junto a la oferta. Con «Compartir» puedes enviarlas por Mail o WhatsApp o guardarlas en Fotos.</div>
+  </section>
 </main>
+
+<!-- Visor de foto -->
+<div class="modal viewer" id="mFoto">
+  <div class="sheet">
+    <div class="top"><h3 id="fotoTitle">Foto</h3><button class="ibtn" data-close><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="body"><img id="fotoImg" alt="Foto de la oferta"></div>
+    <div class="acts"><button id="fotoShare">Compartir</button><button id="fotoDel" class="dangerb">Eliminar</button></div>
+  </div>
+</div>
 
 <!-- Buscar -->
 <div class="modal" id="mSearch">
@@ -499,6 +554,29 @@ function save(immediate){
 function flashSaved(){ const s=$("#saved"); s.textContent="Guardado"; s.style.opacity=1; setTimeout(()=>s.style.opacity=.35, 1200); }
 
 /* =========================================================
+   FOTOS (IndexedDB: más capacidad que localStorage)
+   ========================================================= */
+const FDB = {
+  db:null,
+  open(){ return new Promise((res,rej)=>{ if(this.db) return res(this.db); const r=indexedDB.open("libreta_fotos",1);
+    r.onupgradeneeded=()=>{ const s=r.result.createObjectStore("fotos",{keyPath:"id"}); s.createIndex("oferta",["usuario","ofertaId"]); s.createIndex("usuario","usuario"); };
+    r.onsuccess=()=>{ this.db=r.result; res(this.db); }; r.onerror=()=>rej(r.error); }); },
+  tx(mode){ return this.db.transaction("fotos",mode).objectStore("fotos"); },
+  async porOferta(ofertaId){ await this.open(); return new Promise((res,rej)=>{ const q=this.tx("readonly").index("oferta").getAll([usuario,ofertaId]); q.onsuccess=()=>res(q.result.sort((a,b)=>a.fecha<b.fecha?-1:1)); q.onerror=()=>rej(q.error); }); },
+  async porUsuario(){ await this.open(); return new Promise((res,rej)=>{ const q=this.tx("readonly").index("usuario").getAll(usuario); q.onsuccess=()=>res(q.result); q.onerror=()=>rej(q.error); }); },
+  async put(f){ await this.open(); return new Promise((res,rej)=>{ const q=this.tx("readwrite").put(f); q.onsuccess=()=>res(); q.onerror=()=>rej(q.error); }); },
+  async del(id){ await this.open(); return new Promise((res,rej)=>{ const q=this.tx("readwrite").delete(id); q.onsuccess=()=>res(); q.onerror=()=>rej(q.error); }); },
+  async delOferta(ofertaId){ const fs=await this.porOferta(ofertaId); for(const f of fs) await this.del(f.id); }
+};
+function comprimir(file, max=1280, q=0.82){
+  return new Promise((res,rej)=>{ const url=URL.createObjectURL(file); const im=new Image();
+    im.onload=()=>{ let w=im.width,h=im.height; const k=Math.min(1,max/Math.max(w,h)); w=Math.round(w*k); h=Math.round(h*k);
+      const c=document.createElement("canvas"); c.width=w; c.height=h; c.getContext("2d").drawImage(im,0,0,w,h); URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg",q)); };
+    im.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error("imagen no válida")); }; im.src=url; });
+}
+function dataURLaFile(d, nombre){ const [m,b64]=d.split(","); const mime=m.match(/:(.*?);/)[1]; const bin=atob(b64); const u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); return new File([u],nombre,{type:mime}); }
+
+/* =========================================================
    UTILIDADES
    ========================================================= */
 const $ = s => document.querySelector(s);
@@ -535,6 +613,7 @@ function render(){
   $("#hoja").checked = !!o.hoja;
   renderLineas();
   renderTotales();
+  renderFotos();
   const f = d => new Date(d).toLocaleString("es-ES",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
   $("#meta").textContent = `Creada ${f(o.creada)} · Última modificación ${f(o.modificada)}`;
 }
@@ -656,8 +735,9 @@ $("#results").addEventListener("click",e=>{ const li=e.target.closest("li[data-i
    ========================================================= */
 $("#btnMenu").addEventListener("click",()=>open("#mMenu"));
 $("#btnDup").addEventListener("click",()=>{ const c=JSON.parse(JSON.stringify(ofertas[idx])); c.id=nuevaOferta().id; c.creada=c.modificada=new Date().toISOString(); c.empresa=c.empresa? c.empresa+" (copia)":""; ofertas.splice(idx+1,0,c); close("#mMenu"); go(idx+1,1); toast("Oferta duplicada"); });
-$("#btnExport").addEventListener("click",()=>{
-  const data=JSON.stringify({version:1, exportado:new Date().toISOString(), ofertas},null,1);
+$("#btnExport").addEventListener("click",async()=>{
+  let fotos=[]; try{ fotos=await FDB.porUsuario(); }catch(e){}
+  const data=JSON.stringify({version:2, exportado:new Date().toISOString(), usuario, ofertas, fotos});
   const blob=new Blob([data],{type:"application/json"}); const name=`libreta-ofertas-${usuario}-${new Date().toISOString().slice(0,10)}.json`;
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1000);
   close("#mMenu"); toast(`${ofertas.length} ofertas exportadas`);
@@ -668,12 +748,45 @@ $("#fileImport").addEventListener("change",e=>{
   r.onload=()=>{ try{ const d=JSON.parse(r.result); const inc=Array.isArray(d)?d:d.ofertas; if(!Array.isArray(inc)) throw 0;
       const ids=new Set(ofertas.map(o=>o.id)); let n=0; inc.forEach(o=>{ if(o&&o.id&&!ids.has(o.id)){ ofertas.push(o); n++; } });
       if(ofertas.length===1 && !ofertas[0].empresa && n) { ofertas.shift(); }
-      idx=Math.max(0,ofertas.length-1); render(); save(true); close("#mMenu"); toast(`${n} ofertas añadidas`); }
+      if(Array.isArray(d.fotos)){ d.fotos.forEach(f=>{ if(f&&f.id&&f.data) FDB.put({...f, usuario}).catch(()=>{}); }); }
+      idx=Math.max(0,ofertas.length-1); render(); save(true); close("#mMenu"); toast(`${n} ofertas añadidas${Array.isArray(d.fotos)&&d.fotos.length?` · ${d.fotos.length} fotos`:""}`); }
     catch(err){ toast("Archivo no válido"); } e.target.value=""; };
   r.readAsText(f);
 });
-$("#btnDelete").addEventListener("click",()=>{ const o=ofertas[idx]; $("#confirmTitle").textContent="Eliminar oferta"; $("#confirmText").textContent=`Se eliminará la oferta de «${o.empresa||"sin nombre"}». Esta acción no se puede deshacer.`; close("#mMenu"); open("#mConfirm"); });
-$("#confirmGo").addEventListener("click",()=>{ ofertas.splice(idx,1); if(!ofertas.length) ofertas.push(nuevaOferta()); idx=Math.min(idx,ofertas.length-1); close("#mConfirm"); render(); save(true); toast("Oferta eliminada"); });
+$("#btnDelete").addEventListener("click",()=>{ const o=ofertas[idx]; $("#confirmGo").dataset.mode="oferta"; $("#confirmTitle").textContent="Eliminar oferta"; $("#confirmText").textContent=`Se eliminará la oferta de «${o.empresa||"sin nombre"}». Esta acción no se puede deshacer.`; close("#mMenu"); open("#mConfirm"); });
+$("#confirmGo").addEventListener("click",async()=>{
+  if($("#confirmGo").dataset.mode==="foto"){ try{ await FDB.del(fotoAbierta.id); }catch(e){} fotoAbierta=null; close("#mConfirm"); renderFotos(); toast("Foto eliminada"); return; }
+  try{ await FDB.delOferta(ofertas[idx].id); }catch(e){}
+  ofertas.splice(idx,1); if(!ofertas.length) ofertas.push(nuevaOferta()); idx=Math.min(idx,ofertas.length-1); close("#mConfirm"); render(); save(true); toast("Oferta eliminada"); });
+
+/* =========================================================
+   FOTOS: interfaz
+   ========================================================= */
+let fotosActual=[], fotoAbierta=null;
+async function renderFotos(){
+  const o=ofertas[idx]; const box=$("#fotos");
+  try{ fotosActual=await FDB.porOferta(o.id); }catch(e){ fotosActual=[]; box.innerHTML='<div class="hint">Este navegador no permite guardar fotos.</div>'; return; }
+  if(ofertas[idx]!==o) return; // el usuario cambió de oferta mientras cargaba
+  $("#nFotos").textContent = fotosActual.length? `(${fotosActual.length})`:"";
+  box.innerHTML = fotosActual.map(f=>`<button class="foto" data-id="${f.id}" type="button"><img src="${f.data}" alt=""></button>`).join("");
+}
+async function añadirFotos(files){
+  const o=ofertas[idx]; let n=0;
+  for(const file of files){ try{ const data=await comprimir(file); await FDB.put({id:o.id+"_"+Date.now().toString(36)+Math.random().toString(36).slice(2,5), usuario, ofertaId:o.id, fecha:new Date().toISOString(), data}); n++; }catch(e){ toast("No se pudo añadir una foto"); } }
+  touch(); save(); renderFotos(); if(n) toast(n===1?"Foto guardada":`${n} fotos guardadas`);
+}
+$("#fCam").addEventListener("change",e=>{ if(e.target.files.length) añadirFotos([...e.target.files]); e.target.value=""; });
+$("#fGal").addEventListener("change",e=>{ if(e.target.files.length) añadirFotos([...e.target.files]); e.target.value=""; });
+$("#fotos").addEventListener("click",e=>{ const b=e.target.closest(".foto"); if(!b) return; fotoAbierta=fotosActual.find(f=>f.id===b.dataset.id); if(!fotoAbierta) return;
+  $("#fotoImg").src=fotoAbierta.data; $("#fotoTitle").textContent=(ofertas[idx].empresa||"Oferta")+" · "+new Date(fotoAbierta.fecha).toLocaleDateString("es-ES"); open("#mFoto"); });
+$("#fotoShare").addEventListener("click",async()=>{
+  if(!fotoAbierta) return; const nombre=((ofertas[idx].empresa||"oferta").replace(/[^\w\dáéíóúñÁÉÍÓÚÑ -]/g,"").trim()||"oferta")+"-"+new Date(fotoAbierta.fecha).toISOString().slice(0,10)+".jpg";
+  const file=dataURLaFile(fotoAbierta.data,nombre);
+  if(navigator.canShare && navigator.canShare({files:[file]})){ try{ await navigator.share({files:[file], title:nombre}); }catch(e){} }
+  else { toast("Mantén pulsada la imagen para guardarla o compartirla"); }
+});
+$("#fotoDel").addEventListener("click",()=>{ if(!fotoAbierta) return; $("#confirmTitle").textContent="Eliminar foto"; $("#confirmText").textContent="La foto se eliminará de esta oferta. Esta acción no se puede deshacer.";
+  $("#confirmGo").dataset.mode="foto"; close("#mFoto"); open("#mConfirm"); });
 
 /* Modales */
 function open(s){ $(s).classList.add("open"); }
