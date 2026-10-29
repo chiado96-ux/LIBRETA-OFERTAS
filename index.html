@@ -222,6 +222,13 @@
   .sheet .body{overflow:auto;padding:12px 16px 16px}
   .search{height:48px;border:1px solid var(--line);border-radius:12px;padding:0 14px;width:100%;background:#fbfbfa;outline:none;font-size:17px}
   .search:focus{border-color:var(--accent);box-shadow:var(--focus)}
+  .chips button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .r2{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin-top:10px}
+  .r2 label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+  .r2 input{height:42px;border:1px solid var(--line);border-radius:10px;padding:0 10px;background:#fbfbfa;outline:none;-webkit-appearance:none;appearance:none;width:100%}
+  .r2 input:focus{border-color:var(--accent);box-shadow:var(--focus)}
+  .r2 button{height:42px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:#fbfbfa}
+  @media(max-width:480px){.r2{grid-template-columns:1fr 1fr}.r2 button{grid-column:1/3}}
   .results{list-style:none;margin:12px 0 0;padding:0}
   .results li{padding:12px 10px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;cursor:pointer;border-radius:8px}
   .results li:active{background:var(--accent-soft)}
@@ -442,6 +449,13 @@
   .sheet .body{overflow:auto;padding:12px 16px 16px}
   .search{height:48px;border:1px solid var(--line);border-radius:12px;padding:0 14px;width:100%;background:#fbfbfa;outline:none;font-size:17px}
   .search:focus{border-color:var(--accent);box-shadow:var(--focus)}
+  .chips button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .r2{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin-top:10px}
+  .r2 label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+  .r2 input{height:42px;border:1px solid var(--line);border-radius:10px;padding:0 10px;background:#fbfbfa;outline:none;-webkit-appearance:none;appearance:none;width:100%}
+  .r2 input:focus{border-color:var(--accent);box-shadow:var(--focus)}
+  .r2 button{height:42px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:#fbfbfa}
+  @media(max-width:480px){.r2{grid-template-columns:1fr 1fr}.r2 button{grid-column:1/3}}
   .results{list-style:none;margin:12px 0 0;padding:0}
   .results li{padding:12px 10px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;cursor:pointer;border-radius:8px}
   .results li:active{background:var(--accent-soft)}
@@ -504,7 +518,7 @@
       <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button>
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
-    <div class="lfoot">v1.9</div>
+    <div class="lfoot">v2.0</div>
   </div>
 </div>
 <header>
@@ -637,7 +651,11 @@
   <div class="sheet">
     <div class="top"><h3>Buscar cliente</h3><button class="ibtn" data-close><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="body">
-      <input class="search" id="q" placeholder="Nombre, código postal o población" autocomplete="off" autocorrect="off">
+      <input class="search" id="q" placeholder="Nombre, código postal, población u observaciones" autocomplete="off" autocorrect="off">
+      <div class="chips" id="fEstado" style="margin-top:10px">
+        <button type="button" data-e="" class="on">Todos</button><button type="button" data-e="no">✕ No interesados</button><button type="button" data-e="si">✓ Aceptadas</button><button type="button" data-e="pend">Sin decidir</button>
+      </div>
+      <div class="r2"><label>Desde<input type="date" id="fDesde"></label><label>Hasta<input type="date" id="fHasta"></label><button type="button" id="fLimpiar">Limpiar</button></div>
       <ul class="results" id="results"></ul>
     </div>
   </div>
@@ -720,7 +738,7 @@ let KEY = "libreta_ofertas_v1";
 let ofertas = [];
 let idx = 0;
 
-function nuevaLinea(){ return {uds:1, cont:"1100", residuo:"BANAL", frec:"MENSUAL", nsem:1, precio:""}; }
+function nuevaLinea(){ return {uds:0, cont:"1100", residuo:"BANAL", frec:"MENSUAL", nsem:1, precio:""}; }
 function nuevaOferta(){
   return {id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), creada:new Date().toISOString(), modificada:new Date().toISOString(),
     empresa:"",nif:"",calle:"",numero:"",cp:"",poblacion:"",provincia:"",telefono:"",email:"",contacto:"",
@@ -768,7 +786,11 @@ function dataURLaFile(d, nombre){ const [m,b64]=d.split(","); const mime=m.match
    UTILIDADES
    ========================================================= */
 const $ = s => document.querySelector(s);
-const num = v => { if(v===null||v===undefined) return 0; const n=parseFloat(String(v).replace(/\./g,"").replace(",",".")); return isNaN(n)?0:n; };
+const num = v => { if(v===null||v===undefined) return 0; let s=String(v).trim().replace(/\s|€/g,""); if(!s) return 0;
+  if(s.includes(",")){ s=s.replace(/\./g,"").replace(",","."); }            // 1.234,56 -> 1234.56
+  else if((s.match(/\./g)||[]).length===1 && !/\.\d{3}$/.test(s)){ /* 2.5 -> decimal */ }
+  else { s=s.replace(/\./g,""); }                                           // 1.234 -> 1234
+  const n=parseFloat(s); return isNaN(n)?0:n; };
 const eur = n => n.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
 const esc = s => String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const norm = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
@@ -798,7 +820,7 @@ function render(){
   $("#btnPrev").disabled = idx===0; $("#btnPrev").style.opacity = idx===0?.35:1;
   $("#btnNext").disabled = idx===ofertas.length-1; $("#btnNext").style.opacity = idx===ofertas.length-1?.35:1;
   document.querySelectorAll("[data-k]").forEach(el=>{ el.value = o[el.dataset.k] || ""; });
-  $("#alquiler").value = o.alquiler || "";
+  $("#alquiler").value = o.alquiler || "0,00";
   $("#hoja").checked = !!o.hoja;
   renderLineas();
   renderTotales();
@@ -815,12 +837,12 @@ function renderLineas(){
     const c = contById(l.cont);
     const row=document.createElement("div"); row.className="line"; row.dataset.i=i;
     row.innerHTML = `
-      <div class="cell" data-label="Uds."><input class="num" type="text" inputmode="numeric" data-f="uds" value="${esc(l.uds)}" aria-label="Unidades"></div>
+      <div class="cell" data-label="Uds."><input class="num" type="text" inputmode="numeric" data-f="uds" value="${parseInt(l.uds)||0}" aria-label="Unidades"></div>
       <div class="cell" data-label="Contenedor"><button class="contbtn" data-f="cont" type="button">${contIcon(c)}<span>${esc(c.nombre)}</span><span class="chev">▾</span></button></div>
       <div class="cell" data-label="Residuo"><select data-f="residuo" aria-label="Residuo">${RESIDUOS.map(r=>`<option ${r===l.residuo?"selected":""}>${r}</option>`).join("")}</select></div>
       <div class="cell" data-label="Servicio"><select data-f="frec" aria-label="Frecuencia">${FRECUENCIAS.map(([v,t])=>`<option value="${v}" ${v===l.frec?"selected":""}>${t}</option>`).join("")}</select></div>
       <div class="cell ${l.frec==="SEMANAL"?"":"hidden"}" data-label="/sem."><select data-f="nsem" aria-label="Vaciadas por semana">${[1,2,3,4,5,6,7].map(n=>`<option ${n==l.nsem?"selected":""}>${n}</option>`).join("")}</select></div>
-      <div class="cell" data-label="€/vaciada"><input class="num" type="text" inputmode="decimal" data-f="precio" placeholder="0,00" value="${esc(l.precio)}" aria-label="Precio por vaciada"></div>
+      <div class="cell" data-label="€/vaciada"><input class="num" type="text" inputmode="decimal" data-f="precio" value="${esc(l.precio||"0,00")}" aria-label="Precio por vaciada"></div>
       <div class="sub" data-sub>${eur(subtotalLinea(l))}</div>
       <button class="del" type="button" data-del aria-label="Eliminar línea"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12h10l1-12M9 7V4h6v3"/></svg></button>`;
     box.appendChild(row);
@@ -844,9 +866,15 @@ document.querySelectorAll("[data-k]").forEach(el=>{
   el.addEventListener("input",()=>{ ofertas[idx][el.dataset.k]=el.value; touch(); if(el.dataset.k==="empresa") $("#title").textContent=el.value.trim()||"Nueva oferta"; save(); });
 });
 $("#alquiler").addEventListener("input",e=>{ ofertas[idx].alquiler=e.target.value; touch(); renderTotales(); save(); });
-$("#alquiler").addEventListener("blur",e=>{ const v=num(e.target.value); e.target.value = v? v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}):""; ofertas[idx].alquiler=e.target.value; save(); });
+$("#alquiler").addEventListener("blur",e=>{ const v=num(e.target.value); e.target.value = v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}); ofertas[idx].alquiler=e.target.value; save(); });
 $("#hoja").addEventListener("change",e=>{ ofertas[idx].hoja=e.target.checked; touch(); renderTotales(); save(); });
 
+/* Casillas numéricas: al tocar, se vacían si están a 0 o se selecciona todo */
+const SEL_NUM='.line input[data-f="uds"], .line input[data-f="precio"], #alquiler';
+function focoNumerico(el){ if(num(el.value)===0){ el.value=""; return; } const sel=()=>{ try{ el.setSelectionRange(0, el.value.length); }catch(e){} }; sel(); setTimeout(sel,0);
+  // iOS deshace la selección en el mouseup/touchend posterior al foco: lo anulamos una vez
+  const stop=ev=>{ ev.preventDefault(); el.removeEventListener("mouseup",stop); el.removeEventListener("touchend",stop); }; el.addEventListener("mouseup",stop,{once:true}); el.addEventListener("touchend",stop,{once:true}); setTimeout(()=>{ el.removeEventListener("mouseup",stop); el.removeEventListener("touchend",stop); },400); }
+document.addEventListener("focusin",e=>{ const el=e.target; if(el.matches && el.matches(SEL_NUM)) focoNumerico(el); });
 /* Líneas (delegación) */
 let pickingLine=null;
 $("#lines").addEventListener("input",e=>{
@@ -864,8 +892,8 @@ $("#lines").addEventListener("change",e=>{
 });
 $("#lines").addEventListener("focusout",e=>{
   if(e.target.dataset.f==="precio"){ const row=e.target.closest(".line"); const l=ofertas[idx].lineas[row.dataset.i]; const v=num(e.target.value);
-    e.target.value = v? v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}):""; l.precio=e.target.value; save(); }
-  if(e.target.dataset.f==="uds"){ const row=e.target.closest(".line"); const l=ofertas[idx].lineas[row.dataset.i]; if(!l.uds){ l.uds=1; e.target.value=1; renderTotales(); save(); } }
+    e.target.value = v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}); l.precio=e.target.value; save(); }
+  if(e.target.dataset.f==="uds"){ const row=e.target.closest(".line"); const l=ofertas[idx].lineas[row.dataset.i]; if(!l.uds){ l.uds=0; e.target.value=0; renderTotales(); save(); } }
 });
 $("#lines").addEventListener("click",e=>{
   const row=e.target.closest(".line"); if(!row) return; const i=+row.dataset.i;
@@ -910,14 +938,23 @@ document.addEventListener("keydown",e=>{ if(e.target.matches("input,textarea,sel
 $("#btnSearch").addEventListener("click",()=>{ open("#mSearch"); $("#q").value=""; renderResults(""); setTimeout(()=>$("#q").focus(),50); });
 $("#q").addEventListener("input",e=>renderResults(e.target.value));
 function hl(text,q){ if(!q) return esc(text); const n=norm(text), i=n.indexOf(q); if(i<0) return esc(text); return esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+q.length))+"</mark>"+esc(text.slice(i+q.length)); }
+let fEst="";
+const dia = iso => (iso||"").slice(0,10);
+function enRango(o, d1, d2){ if(!d1&&!d2) return true; const fechas=[dia(o.creada),dia(o.modificada),...(o.entradas||[]).map(e=>dia(e.fecha))].filter(Boolean);
+  return fechas.some(f=> (!d1||f>=d1) && (!d2||f<=d2)); }
+$("#fEstado").addEventListener("click",e=>{ const b=e.target.closest("[data-e]"); if(!b) return; fEst=b.dataset.e; document.querySelectorAll("#fEstado button").forEach(x=>x.classList.toggle("on",x===b)); renderResults($("#q").value); });
+$("#fDesde").addEventListener("change",()=>renderResults($("#q").value)); $("#fHasta").addEventListener("change",()=>renderResults($("#q").value));
+$("#fLimpiar").addEventListener("click",()=>{ $("#fDesde").value=""; $("#fHasta").value=""; fEst=""; document.querySelectorAll("#fEstado button").forEach(x=>x.classList.toggle("on",x.dataset.e==="")); $("#q").value=""; renderResults(""); });
 function renderResults(qraw){
-  const q=norm(qraw.trim()); const ul=$("#results");
-  let list = ofertas.map((o,i)=>({o,i})).filter(({o})=> !q || norm(o.empresa).includes(q) || norm(o.cp).includes(q) || norm(o.poblacion).includes(q) || norm(o.nif).includes(q) || norm(o.contacto).includes(q) || (o.entradas||[]).some(e=>norm(e.texto).includes(q)));
+  const q=norm(qraw.trim()); const ul=$("#results"); const d1=$("#fDesde").value, d2=$("#fHasta").value;
+  let list = ofertas.map((o,i)=>({o,i})).filter(({o})=> enRango(o,d1,d2) && (fEst==="" || (fEst==="pend"? !o.estado : o.estado===fEst)) ).filter(({o})=> !q || norm(o.empresa).includes(q) || norm(o.cp).includes(q) || norm(o.poblacion).includes(q) || norm(o.nif).includes(q) || norm(o.contacto).includes(q) || (o.entradas||[]).some(e=>norm(e.texto).includes(q)));
   list.sort((a,b)=> new Date(b.o.modificada)-new Date(a.o.modificada));
-  if(!list.length){ ul.innerHTML=`<li class="empty" style="display:block;border:none">Sin resultados para «${esc(qraw)}»</li>`; return; }
+  if(!list.length){ ul.innerHTML=`<li class="empty" style="display:block;border:none">Sin resultados${q?` para «${esc(qraw)}»`:""}${(d1||d2)?" en esas fechas":""}${fEst?" con ese estado":""}</li>`; return; }
+  // en búsqueda por fechas, mostrar la fecha que coincide
+  const fechaMostrar=o=>{ if(!d1&&!d2) return new Date(o.modificada).toLocaleDateString("es-ES"); const fs=[{f:dia(o.creada),t:"creada"},...(o.entradas||[]).map(e=>({f:dia(e.fecha),t:"observación"})),{f:dia(o.modificada),t:"modificada"}].filter(x=>x.f&&(!d1||x.f>=d1)&&(!d2||x.f<=d2)); return fs.length? `${new Date(fs[0].f+"T00:00").toLocaleDateString("es-ES")} · ${fs[0].t}`:""; };
   ul.innerHTML = list.map(({o,i})=>{ const t=calcular(o); return `<li data-i="${i}">
       <div><div class="n">${hl(o.empresa||"(sin nombre)",q)} ${o.estado==="no"?'<span class="tag no">✕ No interesado</span>':o.estado==="si"?'<span class="tag si">✓ Aceptada</span>':""}</div><div class="m">${hl(o.cp,q)} ${hl(o.poblacion,q)} ${o.contacto?"· "+esc(o.contacto):""}</div></div>
-      <div style="text-align:right"><div class="n">${eur(t.total)}</div><div class="m">${new Date(o.modificada).toLocaleDateString("es-ES")}</div></div></li>`; }).join("");
+      <div style="text-align:right"><div class="n">${eur(t.total)}</div><div class="m">${fechaMostrar(o)}</div></div></li>`; }).join("");
 }
 $("#results").addEventListener("click",e=>{ const li=e.target.closest("li[data-i]"); if(!li) return; close("#mSearch"); go(+li.dataset.i, +li.dataset.i>idx?1:-1); });
 
