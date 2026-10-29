@@ -38,6 +38,17 @@
   .counter{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px;min-width:64px;text-align:center}
   .saved{font-size:12px;color:var(--muted);min-width:70px;text-align:right;transition:opacity .4s}
 
+  @media(max-width:640px){
+    header{padding-left:10px;padding-right:10px}
+    .bar{gap:6px}
+    .bar h1{display:none}
+    .saved{display:none}
+    .counter{min-width:44px;font-size:13px}
+    .ibtn{width:40px;height:40px}
+    .who{font-size:11px;padding:3px 6px}
+    main{padding:12px 10px calc(env(safe-area-inset-bottom) + 40px)}
+    .card{padding:14px}
+  }
   /* ---------- Contenido ---------- */
   main{max-width:1100px;margin:0 auto;padding:16px 16px calc(env(safe-area-inset-bottom) + 40px)}
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:16px}
@@ -51,7 +62,7 @@
   .f textarea{height:auto;min-height:110px;padding:10px 12px;resize:vertical}
   .f input:focus,.f select:focus,.f textarea:focus,.cell input:focus,.cell select:focus{border-color:var(--accent);box-shadow:var(--focus);background:#fff}
   .c12{grid-column:span 12}.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}.c2{grid-column:span 2}
-  @media(max-width:700px){.c8,.c6,.c4,.c3,.c2{grid-column:span 6}.c12{grid-column:span 12}}
+  @media(max-width:700px){.c6,.c4,.c3,.c2{grid-column:span 6}.c8,.c12{grid-column:span 12}}
 
   /* ---------- Líneas de residuos ---------- */
   .lines-head,.line{display:grid;gap:8px;align-items:center;
@@ -136,18 +147,50 @@
   .confirm button.go{background:var(--danger);border-color:var(--danger);color:#fff}
   .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:60;pointer-events:none}
   .toast.show{opacity:1;transform:translateX(-50%)}
+  /* ---------- Acceso ---------- */
+  #login{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
+  #login.hidden{display:none}
+  .lbox{width:100%;max-width:360px;text-align:center}
+  .lbox h1{font-size:22px;font-weight:600;margin:0 0 4px}
+  .lbox p{color:var(--muted);margin:0 0 22px;font-size:14px}
+  .users{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+  .users button{height:56px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-weight:600;letter-spacing:.5px}
+  .users button.sel{background:var(--accent);border-color:var(--accent);color:#fff}
+  .dots{display:flex;justify-content:center;gap:14px;height:24px;margin-bottom:18px}
+  .dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--accent);display:block}
+  .dots i.on{background:var(--accent)}
+  .dots.err i{border-color:var(--danger);animation:shake .35s}
+  @keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .pad button{height:60px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:22px;font-weight:500}
+  .pad button:active{background:var(--accent-soft)}
+  .pad button.ghost{border:none;background:transparent;font-size:15px;color:var(--muted)}
+  .who{font-size:12px;color:var(--muted);background:var(--accent-soft);border-radius:8px;padding:4px 8px;white-space:nowrap}
   .swipe-anim{animation:pop .22s ease}
   @keyframes pop{from{opacity:.4;transform:translateX(var(--dir,0))}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
 
+<div id="login">
+  <div class="lbox">
+    <h1>Libreta de Ofertas</h1>
+    <p>Elige tu usuario e introduce tu código</p>
+    <div class="users" id="users"></div>
+    <div class="dots" id="dots"><i></i><i></i><i></i><i></i></div>
+    <div class="pad" id="pad">
+      <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button>
+      <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
+    </div>
+  </div>
+</div>
 <header>
   <div class="bar">
     <button class="ibtn" id="btnPrev" aria-label="Oferta anterior"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <div class="counter" id="counter">1 / 1</div>
     <button class="ibtn" id="btnNext" aria-label="Oferta siguiente"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
     <h1 id="title">Nueva oferta</h1>
+    <span class="who" id="who"></span>
     <div class="saved" id="saved"></div>
     <button class="ibtn" id="btnSearch" aria-label="Buscar cliente"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
     <button class="ibtn" id="btnMenu" aria-label="Más opciones"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
@@ -236,6 +279,7 @@
     <div class="top"><h3>Opciones</h3><button class="ibtn" data-close><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="body menu">
       <button id="btnDup">⧉&nbsp; Duplicar esta oferta</button>
+      <button id="btnLogout">⇄&nbsp; Cambiar de usuario</button>
       <button id="btnExport">⇩&nbsp; Copia de seguridad (exportar todo)</button>
       <button id="btnImport">⇧&nbsp; Restaurar copia de seguridad</button>
       <input type="file" id="fileImport" accept="application/json,.json" style="display:none">
@@ -292,7 +336,9 @@ const contIcon = c => `<img src="${c.img}" alt="">`;
 /* =========================================================
    ESTADO Y PERSISTENCIA
    ========================================================= */
-const KEY = "libreta_ofertas_v1";
+const USUARIOS = [{nombre:"JOSE",pin:"5555"},{nombre:"MERY",pin:"1111"},{nombre:"SERGI",pin:"2222"},{nombre:"JOAN",pin:"3333"}];
+let usuario = null;
+let KEY = "libreta_ofertas_v1";
 let ofertas = [];
 let idx = 0;
 
@@ -303,6 +349,9 @@ function nuevaOferta(){
     lineas:[nuevaLinea()], alquiler:"", hoja:false, obs:""};
 }
 function load(){
+  try{ // migración: datos anteriores a los usuarios pasan a JOSE
+    if(usuario==='JOSE' && !localStorage.getItem(KEY) && localStorage.getItem('libreta_ofertas_v1')){ localStorage.setItem(KEY, localStorage.getItem('libreta_ofertas_v1')); }
+  }catch(e){}
   try{ const raw=localStorage.getItem(KEY); if(raw){ const d=JSON.parse(raw); if(Array.isArray(d.ofertas)&&d.ofertas.length){ ofertas=d.ofertas; idx=Math.min(d.idx||0, ofertas.length-1); return; } } }catch(e){ console.warn("No se pudo leer el almacenamiento", e); }
   ofertas=[nuevaOferta()]; idx=0;
 }
@@ -446,7 +495,7 @@ $("#btnNew").addEventListener("click",()=>{ ofertas.push(nuevaOferta()); go(ofer
 /* Deslizar: hacia la izquierda = anterior · hacia la derecha = siguiente (según tu indicación) */
 let tx=0,ty=0,tt=0;
 document.addEventListener("touchstart",e=>{ if(e.target.closest(".modal")) return; const t=e.touches[0]; tx=t.clientX; ty=t.clientY; tt=Date.now(); },{passive:true});
-document.addEventListener("touchend",e=>{ if(e.target.closest(".modal")||!tt) return; const t=e.changedTouches[0]; const dx=t.clientX-tx, dy=t.clientY-ty; tt=0;
+document.addEventListener("touchend",e=>{ if(e.target.closest(".modal")||e.target.closest("#login")||!tt) return; const t=e.changedTouches[0]; const dx=t.clientX-tx, dy=t.clientY-ty; tt=0;
   if(Math.abs(dx)>80 && Math.abs(dy)<60 && !e.target.matches("textarea,input[type=range]")){ if(dx<0) go(idx-1,-1); else go(idx+1,1); } },{passive:true});
 document.addEventListener("keydown",e=>{ if(e.target.matches("input,textarea,select")) return; if(e.key==="ArrowLeft") go(idx-1,-1); if(e.key==="ArrowRight") go(idx+1,1); });
 
@@ -474,7 +523,7 @@ $("#btnMenu").addEventListener("click",()=>open("#mMenu"));
 $("#btnDup").addEventListener("click",()=>{ const c=JSON.parse(JSON.stringify(ofertas[idx])); c.id=nuevaOferta().id; c.creada=c.modificada=new Date().toISOString(); c.empresa=c.empresa? c.empresa+" (copia)":""; ofertas.splice(idx+1,0,c); close("#mMenu"); go(idx+1,1); toast("Oferta duplicada"); });
 $("#btnExport").addEventListener("click",()=>{
   const data=JSON.stringify({version:1, exportado:new Date().toISOString(), ofertas},null,1);
-  const blob=new Blob([data],{type:"application/json"}); const name=`libreta-ofertas-${new Date().toISOString().slice(0,10)}.json`;
+  const blob=new Blob([data],{type:"application/json"}); const name=`libreta-ofertas-${usuario}-${new Date().toISOString().slice(0,10)}.json`;
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1000);
   close("#mMenu"); toast(`${ofertas.length} ofertas exportadas`);
 });
@@ -497,8 +546,31 @@ function close(s){ $(s).classList.remove("open"); }
 document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>close("#"+b.closest(".modal").id)));
 document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{ if(e.target===m) close("#"+m.id); }));
 
+/* =========================================================
+   ACCESO POR USUARIO
+   ========================================================= */
+let selUser=null, pin="";
+function renderUsers(){ $("#users").innerHTML=USUARIOS.map(u=>`<button type="button" class="${u.nombre===selUser?"sel":""}" data-u="${u.nombre}">${u.nombre}</button>`).join(""); }
+function renderDots(){ document.querySelectorAll("#dots i").forEach((d,i)=>d.classList.toggle("on",i<pin.length)); }
+$("#users").addEventListener("click",e=>{ const b=e.target.closest("[data-u]"); if(!b) return; selUser=b.dataset.u; pin=""; renderUsers(); renderDots(); });
+$("#pad").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.dataset.k==="clear"){ pin=""; renderDots(); return; }
+  if(b.dataset.k==="back"){ pin=pin.slice(0,-1); renderDots(); return; }
+  if(!selUser){ toast("Elige primero tu usuario"); return; }
+  if(pin.length>=4) return;
+  pin+=b.textContent.trim(); renderDots();
+  if(pin.length===4){ const u=USUARIOS.find(x=>x.nombre===selUser); if(u && u.pin===pin){ entrar(u.nombre); } else { const d=$("#dots"); d.classList.add("err"); setTimeout(()=>{ d.classList.remove("err"); pin=""; renderDots(); },450); } }
+});
+function entrar(nombre){ usuario=nombre; KEY="libreta_ofertas_v1_"+nombre; try{ sessionStorage.setItem("libreta_usuario",nombre); }catch(e){}
+  $("#who").textContent=nombre; $("#login").classList.add("hidden"); pin=""; renderDots(); load(); render(); }
+function salir(){ save(true); usuario=null; try{ sessionStorage.removeItem("libreta_usuario"); }catch(e){} selUser=null; pin=""; renderUsers(); renderDots(); $("#login").classList.remove("hidden"); }
+$("#btnLogout").addEventListener("click",()=>{ close("#mMenu"); salir(); });
+
 /* Arranque */
-load(); render();
+renderUsers();
+(function(){ let prev=null; try{ prev=sessionStorage.getItem("libreta_usuario"); }catch(e){}
+  if(prev && USUARIOS.some(u=>u.nombre===prev)) entrar(prev); })();
 window.addEventListener("pagehide",()=>save(true));
 if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
 </script>
