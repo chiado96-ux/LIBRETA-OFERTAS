@@ -316,7 +316,7 @@
       <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button>
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
-    <div class="lfoot">Gestions Verdes · Residuos industriales</div>
+    <div class="lfoot">Gestions Verdes · Residuos industriales · v1.4</div>
   </div>
 </div>
 <header>
@@ -707,7 +707,11 @@ renderUsers();
 (function(){ let prev=null; try{ prev=sessionStorage.getItem("libreta_usuario"); }catch(e){}
   if(prev && USUARIOS.some(u=>u.nombre===prev)) entrar(prev); })();
 window.addEventListener("pagehide",()=>save(true));
-if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(reg=>{ reg.update().catch(()=>{}); }).catch(()=>{});
+  let recargado=false;
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(recargado) return; recargado=true; save(true); location.reload(); });
+}
 </script>
 </body>
 </html>
