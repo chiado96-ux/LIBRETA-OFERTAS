@@ -119,6 +119,34 @@
   .trow.total span:last-child{color:var(--accent);font-weight:700}
   .hint{font-size:12px;color:var(--muted);margin-top:4px}
 
+  /* ---------- Observaciones por entradas ---------- */
+  .obsnew{display:flex;gap:10px;align-items:flex-end;margin-bottom:12px}
+  .obsnew textarea{flex:1;min-height:64px;height:64px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fbfbfa;resize:vertical;outline:none;-webkit-appearance:none;appearance:none}
+  .obsnew textarea:focus{border-color:var(--accent);box-shadow:var(--focus);background:#fff}
+  .obsnew button{height:44px;padding:0 16px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-weight:600;flex:none}
+  .obsnew button:disabled{opacity:.45}
+  .entrada{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 4px;border-top:1px solid var(--line)}
+  .entrada .fe{font-size:12px;color:var(--muted);margin-bottom:3px}
+  .entrada .t{white-space:pre-wrap;line-height:1.45}
+  .entrada .del{width:36px;height:36px}
+  .entrada:first-of-type .fe::after{content:" · última";color:var(--accent)}
+  .estado{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+  .estado button{height:64px;border-radius:14px;border:2px solid var(--line);background:#fbfbfa;display:flex;align-items:center;justify-content:center;gap:12px;font-weight:600;font-size:16px;transition:.15s}
+  .estado button .ic{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid currentColor}
+  .estado button svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+  .estado .no{color:var(--danger)}
+  .estado .si{color:var(--accent)}
+  .estado .no.on{background:var(--danger);border-color:var(--danger);color:#fff}
+  .estado .si.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .estado button.on .ic{background:#fff;color:inherit}
+  .estado .no.on .ic{color:var(--danger)}
+  .estado .si.on .ic{color:var(--accent)}
+  .tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:8px;white-space:nowrap}
+  .tag.no{background:#fbe9e5;color:var(--danger)}
+  .tag.si{background:var(--accent-soft);color:var(--accent)}
+  .bar .tag{display:none}
+  .bar .tag.on{display:inline-flex}
+  @media(max-width:640px){.bar .tag{font-size:0;padding:4px 6px}.bar .tag::before{font-size:12px;content:attr(data-s)}}
   /* ---------- Fotos ---------- */
   .fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:12px}
   .foto{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#eef0ee;padding:0}
@@ -311,6 +339,34 @@
   .trow.total span:last-child{color:var(--accent);font-weight:700}
   .hint{font-size:12px;color:var(--muted);margin-top:4px}
 
+  /* ---------- Observaciones por entradas ---------- */
+  .obsnew{display:flex;gap:10px;align-items:flex-end;margin-bottom:12px}
+  .obsnew textarea{flex:1;min-height:64px;height:64px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fbfbfa;resize:vertical;outline:none;-webkit-appearance:none;appearance:none}
+  .obsnew textarea:focus{border-color:var(--accent);box-shadow:var(--focus);background:#fff}
+  .obsnew button{height:44px;padding:0 16px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-weight:600;flex:none}
+  .obsnew button:disabled{opacity:.45}
+  .entrada{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 4px;border-top:1px solid var(--line)}
+  .entrada .fe{font-size:12px;color:var(--muted);margin-bottom:3px}
+  .entrada .t{white-space:pre-wrap;line-height:1.45}
+  .entrada .del{width:36px;height:36px}
+  .entrada:first-of-type .fe::after{content:" · última";color:var(--accent)}
+  .estado{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+  .estado button{height:64px;border-radius:14px;border:2px solid var(--line);background:#fbfbfa;display:flex;align-items:center;justify-content:center;gap:12px;font-weight:600;font-size:16px;transition:.15s}
+  .estado button .ic{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid currentColor}
+  .estado button svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+  .estado .no{color:var(--danger)}
+  .estado .si{color:var(--accent)}
+  .estado .no.on{background:var(--danger);border-color:var(--danger);color:#fff}
+  .estado .si.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  .estado button.on .ic{background:#fff;color:inherit}
+  .estado .no.on .ic{color:var(--danger)}
+  .estado .si.on .ic{color:var(--accent)}
+  .tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:8px;white-space:nowrap}
+  .tag.no{background:#fbe9e5;color:var(--danger)}
+  .tag.si{background:var(--accent-soft);color:var(--accent)}
+  .bar .tag{display:none}
+  .bar .tag.on{display:inline-flex}
+  @media(max-width:640px){.bar .tag{font-size:0;padding:4px 6px}.bar .tag::before{font-size:12px;content:attr(data-s)}}
   /* ---------- Fotos ---------- */
   .fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-bottom:12px}
   .foto{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#eef0ee;padding:0}
@@ -448,7 +504,7 @@
       <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button>
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
-    <div class="lfoot">v1.8</div>
+    <div class="lfoot">v1.9</div>
   </div>
 </div>
 <header>
@@ -457,6 +513,7 @@
     <div class="counter" id="counter">1 / 1</div>
     <button class="ibtn" id="btnNext" aria-label="Oferta siguiente"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
     <h1 id="title">Nueva oferta</h1>
+    <span class="tag" id="tagEstado"></span>
     <span class="who" id="who"></span>
     <div class="saved" id="saved"></div>
     <button class="ibtn bell" id="btnBell" aria-label="Avisos"><svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span class="badge" id="badge"></span></button>
@@ -517,7 +574,12 @@
 
   <section class="card">
     <h2>Observaciones</h2>
-    <div class="f"><textarea id="obs" data-k="obs" placeholder="Notas de la visita, condiciones, horarios de acceso…"></textarea></div>
+    <div class="obsnew"><textarea id="obsNew" placeholder="Nueva observación: notas de la visita, condiciones, motivo…"></textarea><button id="obsAdd" type="button">Añadir</button></div>
+    <div id="entradas"></div>
+    <div class="estado">
+      <button type="button" class="no" id="estNo"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span>No interesado</button>
+      <button type="button" class="si" id="estSi"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>Oferta aceptada</button>
+    </div>
     <div class="hint" id="meta"></div>
   </section>
 
@@ -662,13 +724,13 @@ function nuevaLinea(){ return {uds:1, cont:"1100", residuo:"BANAL", frec:"MENSUA
 function nuevaOferta(){
   return {id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), creada:new Date().toISOString(), modificada:new Date().toISOString(),
     empresa:"",nif:"",calle:"",numero:"",cp:"",poblacion:"",provincia:"",telefono:"",email:"",contacto:"",
-    lineas:[nuevaLinea()], alquiler:"", hoja:false, obs:""};
+    lineas:[nuevaLinea()], alquiler:"", hoja:false, obs:"", entradas:[], estado:null};
 }
 function load(){
   try{ // migración: datos anteriores a los usuarios pasan a JOSE
     if(usuario==='JOSE' && !localStorage.getItem(KEY) && localStorage.getItem('libreta_ofertas_v1')){ localStorage.setItem(KEY, localStorage.getItem('libreta_ofertas_v1')); }
   }catch(e){}
-  try{ const raw=localStorage.getItem(KEY); if(raw){ const d=JSON.parse(raw); if(Array.isArray(d.ofertas)&&d.ofertas.length){ ofertas=d.ofertas; idx=Math.min(d.idx||0, ofertas.length-1); return; } } }catch(e){ console.warn("No se pudo leer el almacenamiento", e); }
+  try{ const raw=localStorage.getItem(KEY); if(raw){ const d=JSON.parse(raw); if(Array.isArray(d.ofertas)&&d.ofertas.length){ ofertas=d.ofertas.map(migrar); idx=Math.min(d.idx||0, ofertas.length-1); return; } } }catch(e){ console.warn("No se pudo leer el almacenamiento", e); }
   ofertas=[nuevaOferta()]; idx=0;
 }
 let saveTimer=null;
@@ -728,8 +790,9 @@ function calcular(o){
 /* =========================================================
    RENDER
    ========================================================= */
+function migrar(o){ if(!Array.isArray(o.entradas)) o.entradas=[]; if(o.obs && o.obs.trim()){ o.entradas.push({id:Date.now().toString(36), fecha:o.modificada||o.creada||new Date().toISOString(), texto:o.obs.trim()}); o.obs=""; } if(o.estado===undefined) o.estado=null; return o; }
 function render(){
-  const o = ofertas[idx];
+  const o = migrar(ofertas[idx]);
   $("#counter").textContent = `${idx+1} / ${ofertas.length}`;
   $("#title").textContent = o.empresa.trim() || "Nueva oferta";
   $("#btnPrev").disabled = idx===0; $("#btnPrev").style.opacity = idx===0?.35:1;
@@ -739,6 +802,8 @@ function render(){
   $("#hoja").checked = !!o.hoja;
   renderLineas();
   renderTotales();
+  renderEntradas();
+  renderEstado();
   renderFotos();
   const f = d => new Date(d).toLocaleString("es-ES",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
   $("#meta").textContent = `Creada ${f(o.creada)} · Última modificación ${f(o.modificada)}`;
@@ -847,11 +912,11 @@ $("#q").addEventListener("input",e=>renderResults(e.target.value));
 function hl(text,q){ if(!q) return esc(text); const n=norm(text), i=n.indexOf(q); if(i<0) return esc(text); return esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+q.length))+"</mark>"+esc(text.slice(i+q.length)); }
 function renderResults(qraw){
   const q=norm(qraw.trim()); const ul=$("#results");
-  let list = ofertas.map((o,i)=>({o,i})).filter(({o})=> !q || norm(o.empresa).includes(q) || norm(o.cp).includes(q) || norm(o.poblacion).includes(q) || norm(o.nif).includes(q) || norm(o.contacto).includes(q));
+  let list = ofertas.map((o,i)=>({o,i})).filter(({o})=> !q || norm(o.empresa).includes(q) || norm(o.cp).includes(q) || norm(o.poblacion).includes(q) || norm(o.nif).includes(q) || norm(o.contacto).includes(q) || (o.entradas||[]).some(e=>norm(e.texto).includes(q)));
   list.sort((a,b)=> new Date(b.o.modificada)-new Date(a.o.modificada));
   if(!list.length){ ul.innerHTML=`<li class="empty" style="display:block;border:none">Sin resultados para «${esc(qraw)}»</li>`; return; }
   ul.innerHTML = list.map(({o,i})=>{ const t=calcular(o); return `<li data-i="${i}">
-      <div><div class="n">${hl(o.empresa||"(sin nombre)",q)}</div><div class="m">${hl(o.cp,q)} ${hl(o.poblacion,q)} ${o.contacto?"· "+esc(o.contacto):""}</div></div>
+      <div><div class="n">${hl(o.empresa||"(sin nombre)",q)} ${o.estado==="no"?'<span class="tag no">✕ No interesado</span>':o.estado==="si"?'<span class="tag si">✓ Aceptada</span>':""}</div><div class="m">${hl(o.cp,q)} ${hl(o.poblacion,q)} ${o.contacto?"· "+esc(o.contacto):""}</div></div>
       <div style="text-align:right"><div class="n">${eur(t.total)}</div><div class="m">${new Date(o.modificada).toLocaleDateString("es-ES")}</div></div></li>`; }).join("");
 }
 $("#results").addEventListener("click",e=>{ const li=e.target.closest("li[data-i]"); if(!li) return; close("#mSearch"); go(+li.dataset.i, +li.dataset.i>idx?1:-1); });
@@ -882,11 +947,33 @@ $("#fileImport").addEventListener("change",e=>{
 });
 $("#btnDelete").addEventListener("click",()=>{ const o=ofertas[idx]; $("#confirmGo").dataset.mode="oferta"; $("#confirmTitle").textContent="Eliminar oferta"; $("#confirmText").textContent=`Se eliminará la oferta de «${o.empresa||"sin nombre"}». Esta acción no se puede deshacer.`; close("#mMenu"); open("#mConfirm"); });
 $("#confirmGo").addEventListener("click",async()=>{
+  if($("#confirmGo").dataset.mode==="entrada"){ const o=ofertas[idx]; o.entradas=o.entradas.filter(x=>x.id!==$("#confirmGo").dataset.id); touch(); close("#mConfirm"); renderEntradas(); save(); return; }
   if($("#confirmGo").dataset.mode==="fotosSel"){ for(const id of [...selFotos]){ try{ await FDB.del(id); }catch(e){} } close("#mConfirm"); salirSeleccion(); renderFotos(); toast("Fotos eliminadas"); return; }
   if($("#confirmGo").dataset.mode==="foto"){ try{ await FDB.del(fotoAbierta.id); }catch(e){} fotoAbierta=null; close("#mConfirm"); renderFotos(); toast("Foto eliminada"); return; }
   try{ await FDB.delOferta(ofertas[idx].id); }catch(e){}
   avisos.forEach(a=>{ if(a.ofertaId===ofertas[idx].id) a.ofertaId=null; }); saveAvisos();
   ofertas.splice(idx,1); if(!ofertas.length) ofertas.push(nuevaOferta()); idx=Math.min(idx,ofertas.length-1); close("#mConfirm"); render(); save(true); toast("Oferta eliminada"); });
+
+/* =========================================================
+   OBSERVACIONES POR ENTRADAS + ESTADO
+   ========================================================= */
+const fEntrada = d => new Date(d).toLocaleString("es-ES",{weekday:"short",day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+function renderEntradas(){
+  const o=ofertas[idx]; const box=$("#entradas"); $("#obsNew").value="";
+  const list=[...o.entradas].sort((a,b)=>a.fecha<b.fecha?1:-1);
+  box.innerHTML = list.map(e=>`<div class="entrada" data-id="${e.id}"><div><div class="fe">${fEntrada(e.fecha)}</div><div class="t">${esc(e.texto)}</div></div><button class="del" type="button" data-del aria-label="Eliminar entrada"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12h10l1-12M9 7V4h6v3"/></svg></button></div>`).join("")
+    || `<div class="hint">Sin observaciones todavía. Cada vez que añadas una queda registrada con su fecha; la última aparece la primera.</div>`;
+}
+$("#obsAdd").addEventListener("click",()=>{ const t=$("#obsNew").value.trim(); if(!t){ $("#obsNew").focus(); return; }
+  ofertas[idx].entradas.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), fecha:new Date().toISOString(), texto:t}); touch(); renderEntradas(); save(); toast("Observación añadida"); });
+$("#entradas").addEventListener("click",e=>{ const b=e.target.closest("[data-del]"); if(!b) return; const row=b.closest(".entrada"); const o=ofertas[idx];
+  $("#confirmTitle").textContent="Eliminar observación"; $("#confirmText").textContent="Se eliminará esta entrada de observaciones."; $("#confirmGo").dataset.mode="entrada"; $("#confirmGo").dataset.id=row.dataset.id; open("#mConfirm"); });
+function renderEstado(){ const o=ofertas[idx]; $("#estNo").classList.toggle("on",o.estado==="no"); $("#estSi").classList.toggle("on",o.estado==="si");
+  const t=$("#tagEstado"); t.className="tag"+(o.estado?" on "+o.estado:""); t.textContent=o.estado==="no"?"✕ No interesado":o.estado==="si"?"✓ Aceptada":""; t.dataset.s=o.estado==="no"?"✕":"✓"; }
+function setEstado(v){ const o=ofertas[idx]; o.estado = o.estado===v? null : v; touch(); renderEstado(); save();
+  if(o.estado==="no"){ $("#obsNew").placeholder="Motivo por el que no está interesado…"; $("#obsNew").focus(); } else { $("#obsNew").placeholder="Nueva observación: notas de la visita, condiciones, motivo…"; } }
+$("#estNo").addEventListener("click",()=>setEstado("no"));
+$("#estSi").addEventListener("click",()=>setEstado("si"));
 
 /* =========================================================
    FOTOS: interfaz
