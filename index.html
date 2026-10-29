@@ -150,6 +150,41 @@
   .viewer .acts{display:flex;gap:10px;padding:12px 16px;background:#111;border-top:1px solid #333}
   .viewer .acts button{flex:1;height:46px;border-radius:12px;border:1px solid #333;background:#222;color:#fff;font-weight:500}
   .viewer .acts button.dangerb{color:#ff8a76}
+  /* ---------- Avisos ---------- */
+  .ibtn.bell{position:relative}
+  .badge{position:absolute;top:-5px;right:-5px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--danger);color:#fff;font-size:12px;font-weight:600;display:none;align-items:center;justify-content:center;border:2px solid var(--bg)}
+  .badge.on{display:flex}
+  .ibtn.bell.due svg{stroke:var(--danger)}
+  .aform{display:grid;grid-template-columns:1fr;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fbfbfa;margin-bottom:14px}
+  .aform .r{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .aform input{height:44px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:#fff;width:100%;outline:none;-webkit-appearance:none;appearance:none}
+  .aform input:focus{border-color:var(--accent);box-shadow:var(--focus)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chips button{height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--line);background:#fff;font-size:14px}
+  .chips button:active{background:var(--accent-soft)}
+  .aform .go{height:46px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-weight:600}
+  .aform .go:disabled{opacity:.45}
+  .alist h4{font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:14px 0 6px}
+  .aviso{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:10px 6px;border-bottom:1px solid var(--line)}
+  .aviso.due .fecha{color:var(--danger);font-weight:600}
+  .aviso.hecho .txt{text-decoration:line-through;color:var(--muted)}
+  .aviso .txt{font-weight:500}
+  .aviso .sub{font-size:13px;color:var(--muted)}
+  .aviso .sub a{color:var(--accent);text-decoration:none}
+  .aviso .acts{display:flex;gap:4px}
+  .aviso .acts button{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center}
+  .aviso .acts svg{width:18px;height:18px;stroke:var(--ink);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .ck{width:28px;height:28px;border-radius:50%;border:2px solid var(--accent);background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto}
+  .ck svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;display:none}
+  .aviso.hecho .ck{background:var(--accent)}
+  .aviso.hecho .ck svg{display:block}
+  .banner{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 70px);transform:translateX(-50%);z-index:70;background:#fff;border:1px solid var(--line);border-left:5px solid var(--danger);border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.2);padding:12px 14px;width:min(520px,calc(100% - 32px));display:none;gap:12px;align-items:center}
+  .banner.on{display:flex}
+  .banner .t{flex:1}
+  .banner .t b{display:block}
+  .banner .t span{font-size:13px;color:var(--muted)}
+  .banner button{height:38px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:#fbfbfa;font-weight:500}
+  .banner button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   /* ---------- Modales ---------- */
   .modal{position:fixed;inset:0;z-index:50;background:rgba(27,31,29,.35);display:none;align-items:flex-start;justify-content:center;padding:calc(env(safe-area-inset-top) + 24px) 16px 16px}
   .modal.open{display:flex}
@@ -307,6 +342,41 @@
   .viewer .acts{display:flex;gap:10px;padding:12px 16px;background:#111;border-top:1px solid #333}
   .viewer .acts button{flex:1;height:46px;border-radius:12px;border:1px solid #333;background:#222;color:#fff;font-weight:500}
   .viewer .acts button.dangerb{color:#ff8a76}
+  /* ---------- Avisos ---------- */
+  .ibtn.bell{position:relative}
+  .badge{position:absolute;top:-5px;right:-5px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--danger);color:#fff;font-size:12px;font-weight:600;display:none;align-items:center;justify-content:center;border:2px solid var(--bg)}
+  .badge.on{display:flex}
+  .ibtn.bell.due svg{stroke:var(--danger)}
+  .aform{display:grid;grid-template-columns:1fr;gap:10px;padding:12px;border:1px solid var(--line);border-radius:14px;background:#fbfbfa;margin-bottom:14px}
+  .aform .r{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .aform input{height:44px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:#fff;width:100%;outline:none;-webkit-appearance:none;appearance:none}
+  .aform input:focus{border-color:var(--accent);box-shadow:var(--focus)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chips button{height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--line);background:#fff;font-size:14px}
+  .chips button:active{background:var(--accent-soft)}
+  .aform .go{height:46px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-weight:600}
+  .aform .go:disabled{opacity:.45}
+  .alist h4{font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:14px 0 6px}
+  .aviso{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:10px 6px;border-bottom:1px solid var(--line)}
+  .aviso.due .fecha{color:var(--danger);font-weight:600}
+  .aviso.hecho .txt{text-decoration:line-through;color:var(--muted)}
+  .aviso .txt{font-weight:500}
+  .aviso .sub{font-size:13px;color:var(--muted)}
+  .aviso .sub a{color:var(--accent);text-decoration:none}
+  .aviso .acts{display:flex;gap:4px}
+  .aviso .acts button{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center}
+  .aviso .acts svg{width:18px;height:18px;stroke:var(--ink);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .ck{width:28px;height:28px;border-radius:50%;border:2px solid var(--accent);background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto}
+  .ck svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;display:none}
+  .aviso.hecho .ck{background:var(--accent)}
+  .aviso.hecho .ck svg{display:block}
+  .banner{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 70px);transform:translateX(-50%);z-index:70;background:#fff;border:1px solid var(--line);border-left:5px solid var(--danger);border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.2);padding:12px 14px;width:min(520px,calc(100% - 32px));display:none;gap:12px;align-items:center}
+  .banner.on{display:flex}
+  .banner .t{flex:1}
+  .banner .t b{display:block}
+  .banner .t span{font-size:13px;color:var(--muted)}
+  .banner button{height:38px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:#fbfbfa;font-weight:500}
+  .banner button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   /* ---------- Modales ---------- */
   .modal{position:fixed;inset:0;z-index:50;background:rgba(27,31,29,.35);display:none;align-items:flex-start;justify-content:center;padding:calc(env(safe-area-inset-top) + 24px) 16px 16px}
   .modal.open{display:flex}
@@ -378,7 +448,7 @@
       <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button>
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
-    <div class="lfoot">v1.7</div>
+    <div class="lfoot">v1.8</div>
   </div>
 </div>
 <header>
@@ -389,6 +459,7 @@
     <h1 id="title">Nueva oferta</h1>
     <span class="who" id="who"></span>
     <div class="saved" id="saved"></div>
+    <button class="ibtn bell" id="btnBell" aria-label="Avisos"><svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span class="badge" id="badge"></span></button>
     <button class="ibtn" id="btnSearch" aria-label="Buscar cliente"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
     <button class="ibtn" id="btnMenu" aria-label="Más opciones"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg></button>
     <button class="ibtn primary" id="btnNew" aria-label="Nueva oferta"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -468,6 +539,27 @@
     <div class="hint">Las fotos se guardan en este dispositivo junto a la oferta. Con «Compartir» puedes enviarlas por Mail o WhatsApp o guardarlas en Fotos.</div>
   </section>
 </main>
+
+<!-- Avisos -->
+<div class="modal" id="mAvisos">
+  <div class="sheet">
+    <div class="top"><h3>Avisos</h3><button class="ibtn" data-close><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="body">
+      <div class="aform">
+        <div class="chips" id="chips"></div>
+        <input id="aTxt" placeholder="¿Qué tienes que hacer? (p. ej. Llamar a Talleres Puig)" autocomplete="off">
+        <div class="r"><input type="date" id="aFecha" aria-label="Fecha"><input type="time" id="aHora" aria-label="Hora (opcional)"></div>
+        <button class="go" id="aAdd" type="button">Añadir aviso</button>
+      </div>
+      <div class="alist" id="alist"></div>
+    </div>
+  </div>
+</div>
+
+<div class="banner" id="banner">
+  <div class="t"><b id="bTxt"></b><span id="bSub"></span></div>
+  <button id="bVer">Ver</button><button class="primary" id="bOk">Hecho</button>
+</div>
 
 <!-- Visor de foto -->
 <div class="modal viewer" id="mFoto">
@@ -771,7 +863,7 @@ $("#btnMenu").addEventListener("click",()=>open("#mMenu"));
 $("#btnDup").addEventListener("click",()=>{ const c=JSON.parse(JSON.stringify(ofertas[idx])); c.id=nuevaOferta().id; c.creada=c.modificada=new Date().toISOString(); c.empresa=c.empresa? c.empresa+" (copia)":""; ofertas.splice(idx+1,0,c); close("#mMenu"); go(idx+1,1); toast("Oferta duplicada"); });
 $("#btnExport").addEventListener("click",async()=>{
   let fotos=[]; try{ fotos=await FDB.porUsuario(); }catch(e){}
-  const data=JSON.stringify({version:2, exportado:new Date().toISOString(), usuario, ofertas, fotos});
+  const data=JSON.stringify({version:3, exportado:new Date().toISOString(), usuario, ofertas, fotos, avisos});
   const blob=new Blob([data],{type:"application/json"}); const name=`libreta-ofertas-${usuario}-${new Date().toISOString().slice(0,10)}.json`;
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1000);
   close("#mMenu"); toast(`${ofertas.length} ofertas exportadas`);
@@ -782,6 +874,7 @@ $("#fileImport").addEventListener("change",e=>{
   r.onload=()=>{ try{ const d=JSON.parse(r.result); const inc=Array.isArray(d)?d:d.ofertas; if(!Array.isArray(inc)) throw 0;
       const ids=new Set(ofertas.map(o=>o.id)); let n=0; inc.forEach(o=>{ if(o&&o.id&&!ids.has(o.id)){ ofertas.push(o); n++; } });
       if(ofertas.length===1 && !ofertas[0].empresa && n) { ofertas.shift(); }
+      if(Array.isArray(d.avisos)){ const ids=new Set(avisos.map(a=>a.id)); d.avisos.forEach(a=>{ if(a&&a.id&&!ids.has(a.id)) avisos.push(a); }); saveAvisos(); }
       if(Array.isArray(d.fotos)){ d.fotos.forEach(f=>{ if(f&&f.id&&f.data) FDB.put({...f, usuario}).catch(()=>{}); }); }
       idx=Math.max(0,ofertas.length-1); render(); save(true); close("#mMenu"); toast(`${n} ofertas añadidas${Array.isArray(d.fotos)&&d.fotos.length?` · ${d.fotos.length} fotos`:""}`); }
     catch(err){ toast("Archivo no válido"); } e.target.value=""; };
@@ -792,6 +885,7 @@ $("#confirmGo").addEventListener("click",async()=>{
   if($("#confirmGo").dataset.mode==="fotosSel"){ for(const id of [...selFotos]){ try{ await FDB.del(id); }catch(e){} } close("#mConfirm"); salirSeleccion(); renderFotos(); toast("Fotos eliminadas"); return; }
   if($("#confirmGo").dataset.mode==="foto"){ try{ await FDB.del(fotoAbierta.id); }catch(e){} fotoAbierta=null; close("#mConfirm"); renderFotos(); toast("Foto eliminada"); return; }
   try{ await FDB.delOferta(ofertas[idx].id); }catch(e){}
+  avisos.forEach(a=>{ if(a.ofertaId===ofertas[idx].id) a.ofertaId=null; }); saveAvisos();
   ofertas.splice(idx,1); if(!ofertas.length) ofertas.push(nuevaOferta()); idx=Math.min(idx,ofertas.length-1); close("#mConfirm"); render(); save(true); toast("Oferta eliminada"); });
 
 /* =========================================================
@@ -841,6 +935,66 @@ $("#fotoShare").addEventListener("click",async()=>{
 $("#fotoDel").addEventListener("click",()=>{ if(!fotoAbierta) return; $("#confirmTitle").textContent="Eliminar foto"; $("#confirmText").textContent="La foto se eliminará de esta oferta. Esta acción no se puede deshacer.";
   $("#confirmGo").dataset.mode="foto"; close("#mFoto"); open("#mConfirm"); });
 
+/* =========================================================
+   AVISOS
+   ========================================================= */
+let avisos=[]; let AKEY="";
+const hoyISO=()=>{ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+function loadAvisos(){ AKEY=KEY+"_avisos"; try{ avisos=JSON.parse(localStorage.getItem(AKEY)||"[]"); }catch(e){ avisos=[]; } }
+function saveAvisos(){ try{ localStorage.setItem(AKEY, JSON.stringify(avisos)); }catch(e){ toast("⚠️ No se pudo guardar el aviso"); } renderBadge(); }
+function vencido(a){ if(a.hecho) return false; const t=hoyISO(); if(a.fecha<t) return true; if(a.fecha>t) return false; if(!a.hora) return true; const n=new Date(); const hm=`${String(n.getHours()).padStart(2,"0")}:${String(n.getMinutes()).padStart(2,"0")}`; return a.hora<=hm; }
+function renderBadge(){ const n=avisos.filter(vencido).length; const b=$("#badge"); b.textContent=n; b.classList.toggle("on",n>0); $("#btnBell").classList.toggle("due",n>0); }
+function fFecha(a){ const d=new Date(a.fecha+"T00:00"); const t=hoyISO(); let s=d.toLocaleDateString("es-ES",{weekday:"short",day:"2-digit",month:"short"}); if(a.fecha===t) s="Hoy"; else { const m=new Date(); m.setDate(m.getDate()+1); if(a.fecha===hoyISO.call(null) ) s="Hoy"; } return s+(a.hora?" · "+a.hora:""); }
+function renderAvisos(){
+  const box=$("#alist"); const t=hoyISO();
+  const pend=avisos.filter(a=>!a.hecho).sort((x,y)=>(x.fecha+(x.hora||""))<(y.fecha+(y.hora||""))?-1:1);
+  const venc=pend.filter(vencido), prox=pend.filter(a=>!vencido(a)), hechos=avisos.filter(a=>a.hecho).sort((x,y)=>x.fecha<y.fecha?1:-1).slice(0,20);
+  const item=a=>{ const o=ofertas.find(x=>x.id===a.ofertaId); return `<div class="aviso ${vencido(a)?"due":""} ${a.hecho?"hecho":""}" data-id="${a.id}">
+      <button class="ck" data-act="toggle" type="button" aria-label="Marcar como hecho"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></button>
+      <div><div class="txt">${esc(a.texto)}</div><div class="sub"><span class="fecha">${fFecha(a)}</span>${o?` · <a href="#" data-act="ir">${esc(o.empresa||"(oferta sin nombre)")}</a>`:""}</div></div>
+      <div class="acts"><button data-act="cal" type="button" aria-label="Añadir al calendario" title="Añadir al calendario del dispositivo"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button><button data-act="del" type="button" aria-label="Eliminar"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12h10l1-12M9 7V4h6v3"/></svg></button></div></div>`; };
+  let html="";
+  if(venc.length) html+=`<h4>Pendientes de hacer</h4>${venc.map(item).join("")}`;
+  if(prox.length) html+=`<h4>Próximos</h4>${prox.map(item).join("")}`;
+  if(hechos.length) html+=`<h4>Hechos</h4>${hechos.map(item).join("")}`;
+  if(!html) html=`<div class="empty">No hay avisos. Crea el primero arriba.</div>`;
+  box.innerHTML=html;
+}
+function abrirAvisos(){ const o=ofertas[idx]; const emp=(o.empresa||"").trim();
+  $("#chips").innerHTML=[["Llamar a","📞","Llamar"],["Volver a visitar a","🚚","Visitar"],["Enviar oferta a","✉️","Enviar oferta"],["Hacer seguimiento de","🔁","Seguimiento"]].map(([t,i,l])=>`<button type="button" data-t="${esc(t)}">${i} ${l}</button>`).join("");
+  $("#aTxt").value=""; const d=new Date(); d.setDate(d.getDate()+7); $("#aFecha").value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; $("#aHora").value="";
+  renderAvisos(); open("#mAvisos"); }
+$("#btnBell").addEventListener("click",abrirAvisos);
+$("#chips").addEventListener("click",e=>{ const b=e.target.closest("[data-t]"); if(!b) return; const emp=(ofertas[idx].empresa||"").trim(); $("#aTxt").value=b.dataset.t+(emp?" "+emp:" "); $("#aTxt").focus(); });
+$("#aAdd").addEventListener("click",()=>{ const texto=$("#aTxt").value.trim(), fecha=$("#aFecha").value, hora=$("#aHora").value; if(!texto){ toast("Escribe qué hay que hacer"); $("#aTxt").focus(); return; } if(!fecha){ toast("Elige una fecha"); return; }
+  avisos.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), texto, fecha, hora:hora||"", ofertaId:ofertas[idx].id, creado:new Date().toISOString(), hecho:false, avisado:false}); saveAvisos(); $("#aTxt").value=""; renderAvisos(); toast("Aviso guardado"); });
+$("#alist").addEventListener("click",e=>{ const row=e.target.closest(".aviso"); const b=e.target.closest("[data-act]"); if(!row||!b) return; e.preventDefault(); const a=avisos.find(x=>x.id===row.dataset.id); if(!a) return;
+  if(b.dataset.act==="toggle"){ a.hecho=!a.hecho; a.hechoEl=a.hecho?new Date().toISOString():null; saveAvisos(); renderAvisos(); }
+  if(b.dataset.act==="del"){ avisos=avisos.filter(x=>x.id!==a.id); saveAvisos(); renderAvisos(); toast("Aviso eliminado"); }
+  if(b.dataset.act==="ir"){ const i=ofertas.findIndex(x=>x.id===a.ofertaId); if(i>=0){ close("#mAvisos"); go(i,i>idx?1:-1); } }
+  if(b.dataset.act==="cal"){ exportarICS(a); } });
+function exportarICS(a){
+  const o=ofertas.find(x=>x.id===a.ofertaId); const uid=a.id+"@libreta-ofertas"; const ymd=a.fecha.replace(/-/g,"");
+  const stamp=new Date().toISOString().replace(/[-:]/g,"").slice(0,15)+"Z";
+  const esc2=s=>String(s||"").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");
+  const desc=o?`${o.empresa||""}${o.contacto?" · "+o.contacto:""}${o.telefono?" · "+o.telefono:""}${o.poblacion?" · "+o.poblacion:""}`:"";
+  let when; if(a.hora){ const hm=a.hora.replace(":",""); const end=String(parseInt(a.hora.slice(0,2))+1).padStart(2,"0")+a.hora.slice(3); when=`DTSTART;TZID=Europe/Madrid:${ymd}T${hm}00\nDTEND;TZID=Europe/Madrid:${ymd}T${end.replace(":","")}00`; }
+  else { const d=new Date(a.fecha+"T00:00"); d.setDate(d.getDate()+1); const n=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}`; when=`DTSTART;VALUE=DATE:${ymd}\nDTEND;VALUE=DATE:${n}`; }
+  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Libreta de Ofertas//ES","BEGIN:VEVENT",`UID:${uid}`,`DTSTAMP:${stamp}`,when,`SUMMARY:${esc2(a.texto)}`,`DESCRIPTION:${esc2(desc)}`,o&&o.calle?`LOCATION:${esc2([o.calle,o.numero,o.cp,o.poblacion].filter(Boolean).join(" "))}`:"", "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${esc2(a.texto)}`,a.hora?"TRIGGER:-PT15M":"TRIGGER;VALUE=DATE-TIME:"+ymd+"T090000Z","END:VALARM","END:VEVENT","END:VCALENDAR"].filter(Boolean).join("\r\n");
+  const file=new File([ics],"aviso.ics",{type:"text/calendar"});
+  if(navigator.canShare && navigator.canShare({files:[file]})){ navigator.share({files:[file],title:a.texto}).catch(()=>{}); return; }
+  const a2=document.createElement("a"); a2.href=URL.createObjectURL(new Blob([ics],{type:"text/calendar"})); a2.download="aviso.ics"; document.body.appendChild(a2); a2.click(); setTimeout(()=>{URL.revokeObjectURL(a2.href); a2.remove();},1000);
+}
+/* Comprobación periódica: banner al vencer */
+let bannerAviso=null;
+function comprobarAvisos(){ if(!usuario) return; renderBadge(); if($("#banner").classList.contains("on")) return;
+  const a=avisos.find(x=>vencido(x)&&!x.avisado); if(!a) return; bannerAviso=a; a.avisado=true; saveAvisos();
+  const o=ofertas.find(x=>x.id===a.ofertaId); $("#bTxt").textContent=a.texto; $("#bSub").textContent=fFecha(a)+(o&&o.empresa?" · "+o.empresa:""); $("#banner").classList.add("on"); }
+$("#bOk").addEventListener("click",()=>{ if(bannerAviso){ bannerAviso.hecho=true; saveAvisos(); } $("#banner").classList.remove("on"); bannerAviso=null; setTimeout(comprobarAvisos,300); });
+$("#bVer").addEventListener("click",()=>{ $("#banner").classList.remove("on"); bannerAviso=null; abrirAvisos(); });
+setInterval(comprobarAvisos, 60000);
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) comprobarAvisos(); });
+
 /* Modales */
 function open(s){ $(s).classList.add("open"); }
 function close(s){ $(s).classList.remove("open"); }
@@ -864,8 +1018,8 @@ $("#pad").addEventListener("click",e=>{
   if(pin.length===4){ const u=USUARIOS.find(x=>x.nombre===selUser); if(u && u.pin===pin){ entrar(u.nombre); } else { const d=$("#dots"); d.classList.add("err"); setTimeout(()=>{ d.classList.remove("err"); pin=""; renderDots(); },450); } }
 });
 function entrar(nombre){ usuario=nombre; KEY="libreta_ofertas_v1_"+nombre; try{ sessionStorage.setItem("libreta_usuario",nombre); }catch(e){}
-  $("#who").textContent=nombre; $("#login").classList.add("hidden"); pin=""; renderDots(); load(); render(); }
-function salir(){ save(true); usuario=null; try{ sessionStorage.removeItem("libreta_usuario"); }catch(e){} selUser=null; pin=""; renderUsers(); renderDots(); $("#login").classList.remove("hidden"); }
+  $("#who").textContent=nombre; $("#login").classList.add("hidden"); pin=""; renderDots(); load(); loadAvisos(); render(); renderBadge(); setTimeout(comprobarAvisos,800); }
+function salir(){ save(true); $("#banner").classList.remove("on"); bannerAviso=null; avisos=[]; renderBadge(); usuario=null; try{ sessionStorage.removeItem("libreta_usuario"); }catch(e){} selUser=null; pin=""; renderUsers(); renderDots(); $("#login").classList.remove("hidden"); }
 $("#btnLogout").addEventListener("click",()=>{ close("#mMenu"); salir(); });
 
 /* Arranque */
