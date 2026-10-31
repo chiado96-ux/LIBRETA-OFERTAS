@@ -544,7 +544,7 @@
       <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button>
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
-    <div class="lfoot">v2.2</div>
+    <div class="lfoot">v2.3</div>
   </div>
 </div>
 <header>
@@ -741,7 +741,12 @@ const IMG_COLOR={"GRIS": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADI
 const COLOR_RESIDUO={BANAL:"GRIS",PLASTICO:"AMARILLO",CARTON:"AZUL",VIDRIO:"VERDE",ORGANICO:"MARRON",MADERA:"MARRON",METAL:"GRIS"};
 const POLIETILENO=new Set(["1100","800"]);
 const CONTENEDORES = [
-  {id:"1100", nombre:"Contenedor de 1100 L", nota:"Polietileno · varios colores"},
+  {id:"1100", nombre:"1100 L · Banal", nota:"Gris", res:"BANAL"},
+  {id:"1100", nombre:"1100 L · Plástico", nota:"Amarillo", res:"PLASTICO"},
+  {id:"1100", nombre:"1100 L · Cartón", nota:"Azul", res:"CARTON"},
+  {id:"1100", nombre:"1100 L · Vidrio", nota:"Verde", res:"VIDRIO"},
+  {id:"1100", nombre:"1100 L · Orgánico", nota:"Marrón", res:"ORGANICO"},
+  {id:"1100", nombre:"1100 L · Madera", nota:"Marrón", res:"MADERA"},
   {id:"120",  nombre:"Contenedor de 120 L",  nota:"Polietileno"},
   {id:"240",  nombre:"Contenedor de 240 L",  nota:"Polietileno"},
   {id:"360",  nombre:"Contenedor de 360 L",  nota:"Polietileno"},
@@ -764,6 +769,8 @@ const CONTENEDORES = [
 const contById = id => CONTENEDORES.find(c=>c.id===id) || CONTENEDORES[0];
 const imgCont = (c,residuo) => POLIETILENO.has(c.id) ? IMG_COLOR[COLOR_RESIDUO[residuo]||"GRIS"] : c.img;
 const contIcon = (c,residuo) => `<img src="${imgCont(c,residuo)}" alt="">`;
+const NOMBRE_RES={BANAL:"Banal",PLASTICO:"Plástico",CARTON:"Cartón",VIDRIO:"Vidrio",ORGANICO:"Orgánico",MADERA:"Madera",METAL:"Metal"};
+const nombreCont = (c,residuo) => c.id==="1100" ? `1100 L · ${NOMBRE_RES[residuo]||residuo}` : c.nombre;
 
 /* =========================================================
    ESTADO Y PERSISTENCIA
@@ -876,7 +883,7 @@ function renderLineas(){
     const row=document.createElement("div"); row.className="line"; row.dataset.i=i;
     row.innerHTML = `
       <div class="cell" data-label="Uds."><input class="num" type="text" inputmode="numeric" data-f="uds" value="${parseInt(l.uds)||0}" aria-label="Unidades"></div>
-      <div class="cell" data-label="Contenedor"><button class="contbtn" data-f="cont" type="button">${contIcon(c,l.residuo)}<span>${esc(c.nombre)}</span><span class="chev">▾</span></button></div>
+      <div class="cell" data-label="Contenedor"><button class="contbtn" data-f="cont" type="button">${contIcon(c,l.residuo)}<span>${esc(nombreCont(c,l.residuo))}</span><span class="chev">▾</span></button></div>
       <div class="cell" data-label="Residuo"><select data-f="residuo" aria-label="Residuo">${RESIDUOS.map(r=>`<option ${r===l.residuo?"selected":""}>${r}</option>`).join("")}</select></div>
       <div class="cell" data-label="Servicio"><select data-f="frec" aria-label="Frecuencia">${FRECUENCIAS.map(([v,t])=>`<option value="${v}" ${v===l.frec?"selected":""}>${t}</option>`).join("")}</select></div>
       <div class="cell ${l.frec==="SEMANAL"?"":"hidden"}" data-label="/sem."><select data-f="nsem" aria-label="Vaciadas por semana">${[1,2,3,4,5,6,7].map(n=>`<option ${n==l.nsem?"selected":""}>${n}</option>`).join("")}</select></div>
@@ -927,7 +934,7 @@ $("#lines").addEventListener("input",e=>{
 });
 $("#lines").addEventListener("change",e=>{
   const row=e.target.closest(".line"); if(!row) return; const l=ofertas[idx].lineas[row.dataset.i]; const f=e.target.dataset.f;
-  if(f==="residuo"){ l.residuo=e.target.value; const c=contById(l.cont); row.querySelector(".contbtn img").src=imgCont(c,l.residuo); }
+  if(f==="residuo"){ l.residuo=e.target.value; const c=contById(l.cont); row.querySelector(".contbtn img").src=imgCont(c,l.residuo); row.querySelector(".contbtn span").textContent=nombreCont(c,l.residuo); }
   if(f==="frec"){ l.frec=e.target.value; row.querySelector('[data-f="nsem"]').closest(".cell").classList.toggle("hidden", l.frec!=="SEMANAL"); }
   if(f==="nsem") l.nsem=parseInt(e.target.value);
   touch(); renderTotales(); save();
@@ -953,10 +960,10 @@ $("#btnAddLine").addEventListener("click",()=>{ const o=ofertas[idx]; const last
 /* Selector de contenedor */
 function openCont(){
   const cur=ofertas[idx].lineas[pickingLine].cont, res=ofertas[idx].lineas[pickingLine].residuo;
-  $("#pickgrid").innerHTML = CONTENEDORES.map(c=>`<button class="pick ${c.id===cur?"sel":""}" data-id="${c.id}" type="button">${contIcon(c,res)}<div>${esc(c.nombre)}</div><small>${esc(c.nota)}</small></button>`).join("");
+  $("#pickgrid").innerHTML = CONTENEDORES.map(c=>{ const sel = c.id===cur && (!c.res || c.res===res); return `<button class="pick ${sel?"sel":""}" data-id="${c.id}" ${c.res?`data-res="${c.res}"`:""} type="button">${contIcon(c,c.res||res)}<div>${esc(c.nombre)}</div><small>${esc(c.nota)}</small></button>`; }).join("");
   open("#mCont");
 }
-$("#pickgrid").addEventListener("click",e=>{ const b=e.target.closest(".pick"); if(!b) return; ofertas[idx].lineas[pickingLine].cont=b.dataset.id; touch(); renderLineas(); save(); close("#mCont"); });
+$("#pickgrid").addEventListener("click",e=>{ const b=e.target.closest(".pick"); if(!b) return; const l=ofertas[idx].lineas[pickingLine]; l.cont=b.dataset.id; if(b.dataset.res) l.residuo=b.dataset.res; touch(); renderLineas(); renderTotales(); save(); close("#mCont"); });
 
 /* =========================================================
    NAVEGACIÓN ENTRE OFERTAS (botones + deslizar)
