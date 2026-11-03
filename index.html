@@ -103,6 +103,15 @@
   .addline{margin-top:12px;height:44px;border:1px dashed #b9c2bc;border-radius:10px;background:transparent;width:100%;color:var(--accent);font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px}
   .addline:active{background:var(--accent-soft)}
   .row2{display:contents}
+  @media(min-width:1151px){
+    .line.alt{grid-template-columns:72px 1fr 44px;row-gap:10px;padding:12px 0}
+    .line.alt > .cell:nth-child(1){grid-row:1;grid-column:1}
+    .line.alt > .cell:nth-child(2){grid-row:1;grid-column:2}
+    .line.alt > .del{grid-row:1;grid-column:3}
+    .line.alt .row2{display:grid;grid-row:2;grid-column:1/-1;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(110px,auto);gap:8px;align-items:center}
+    .line.alt .row2 .cell[data-label]::before{content:attr(data-label);display:block;font-size:11px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .line.alt .row2 .sub{align-self:end;padding-bottom:12px}
+  }
   /* Tablet (iPad vertical y horizontal): dos filas por línea, todo legible */
   @media(max-width:1150px){
     .lines-head{display:none}
@@ -119,6 +128,11 @@
     .row2 .cell[data-label="/sem."]{grid-column:3}
     .row2 .cell[data-label="€/vaciada"]{grid-column:4}
     .row2 .sub{grid-column:5}
+    .row2.alt{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(100px,auto)}
+    .row2.alt .cell[data-label="Cambio €"]{grid-column:2}
+    .row2.alt .cell[data-label="Retirada def. € (no suma)"]{grid-column:3}
+    .row2.alt .cell[data-label="Eliminación del residuo €"]{grid-column:4}
+    .row2.alt .cell[data-label]::before{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   }
   /* Móvil */
   @media(max-width:640px){
@@ -128,6 +142,10 @@
     .row2 .cell[data-label="/sem."]{grid-column:1;grid-row:2}
     .row2 .cell[data-label="€/vaciada"]{grid-column:2;grid-row:2}
     .row2 .sub{grid-column:1/3;grid-row:3;text-align:right;padding-bottom:0;padding-top:4px}
+    .row2.alt{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+    .row2.alt .cell[data-label="Cambio €"]{grid-column:2;grid-row:1}
+    .row2.alt .cell[data-label="Retirada def. € (no suma)"]{grid-column:1;grid-row:2}
+    .row2.alt .cell[data-label="Eliminación del residuo €"]{grid-column:2;grid-row:2}
   }
   /* ---------- Extras y totales ---------- */
   .extras{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -354,7 +372,7 @@
       <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button>
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
-    <div class="lfoot">v2.6</div>
+    <div class="lfoot">v2.7</div>
   </div>
 </div>
 <header>
@@ -422,6 +440,7 @@
     <h2>Precio mensual</h2>
     <div class="totals">
       <div class="trow"><span>Servicios <span class="unit" id="hintServ"></span></span><span id="tServ">0,00 €</span></div>
+      <div class="trow" id="rowCajas" style="display:none"><span>Cajas / cubas <span class="unit">(cambio + eliminación; la retirada no se suma)</span></span><span id="tCajas">0,00 €</span></div>
       <div class="trow"><span>Alquiler <span class="unit" id="hintAlq"></span></span><span id="tAlq">0,00 €</span></div>
       <div class="trow"><span>Hoja de seguimiento</span><span id="tHoja">0,00 €</span></div>
       <div class="trow total"><span>Total</span><span id="tTotal">0,00 €</span></div>
@@ -434,7 +453,7 @@
     <div id="entradas"></div>
     <div class="estado">
       <button type="button" class="no" id="estNo"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span>No interesado</button>
-      <button type="button" class="si" id="estSi"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>Oferta aceptada</button>
+      <button type="button" class="si" id="estSi"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>Interesado</button>
     </div>
     <div class="hint" id="meta"></div>
   </section>
@@ -496,7 +515,7 @@
     <div class="body">
       <input class="search" id="q" placeholder="Nombre, código postal, población u observaciones" autocomplete="off" autocorrect="off">
       <div class="chips" id="fEstado" style="margin-top:10px">
-        <button type="button" data-e="" class="on">Todos</button><button type="button" data-e="no">✕ No interesados</button><button type="button" data-e="si">✓ Aceptadas</button><button type="button" data-e="pend">Sin decidir</button>
+        <button type="button" data-e="" class="on">Todos</button><button type="button" data-e="no">✕ No interesados</button><button type="button" data-e="si">✓ Interesados</button><button type="button" data-e="pend">Sin decidir</button>
       </div>
       <div class="r2"><label>Desde<input type="date" id="fDesde"></label><label>Hasta<input type="date" id="fHasta"></label><button type="button" id="fLimpiar">Limpiar</button></div>
       <ul class="results" id="results"></ul>
@@ -582,7 +601,7 @@ const CONTENEDORES = [
   {id:"JUMBO_XL", nombre:"JUMBO XL", nota:"3,18 × 1,7 × 1,59 m"},
   {id:"PEQ_ABIERTO", nombre:"PEQUEÑO ABIERTO", nota:"2,35 × 1 × 0,8 m"},
   {id:"EST_ALZAS", nombre:"ESTÁNDAR CON ALZAS", nota:"3,36 × 1,81 × 1,3 m"},
-  {id:"HISPALEV", nombre:"HISPALEV", nota:"8 – 15 m³"},
+  {id:"HISPALEV", nombre:"PATERA", nota:"8 – 15 m³"},
   {id:"CAJAS", nombre:"CAJAS", nota:"12 – 30 m³"},
   {id:"AUTOCOMPACT", nombre:"AUTOCOMPACTADORA", nota:"12 – 30 m³"},
   {id:"CUBI", nombre:"CUBICONTAINER", nota:"1000 L"},
@@ -607,7 +626,8 @@ let KEY = "libreta_ofertas_v1";
 let ofertas = [];
 let idx = 0;
 
-function nuevaLinea(){ return {uds:0, cont:"1100", residuo:"BANAL", frec:"MENSUAL", nsem:1, precio:""}; }
+function nuevaLinea(){ return {uds:0, cont:"1100", residuo:"BANAL", frec:"MENSUAL", nsem:1, precio:"", cambio:"", retirada:"", eliminacion:""}; }
+const esPolietileno = id => ["1100","120","240","360","800"].includes(id);
 function nuevaOferta(){
   return {id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), creada:new Date().toISOString(), modificada:new Date().toISOString(),
     empresa:"",nif:"",codemp:"",empresaTipo:null,enviada:false,calle:"",numero:"",cp:"",poblacion:"",provincia:"",telefono:"",email:"",contacto:"",
@@ -669,13 +689,14 @@ function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("sh
    CÁLCULO
    ========================================================= */
 function factor(l){ return l.frec==="QUINCENAL"?2 : l.frec==="SEMANAL"? SEMANAS_MES*(parseInt(l.nsem)||1) : 1; }
-function subtotalLinea(l){ return (parseInt(l.uds)||0) * num(l.precio) * factor(l); }
+function subtotalLinea(l){ const u=parseInt(l.uds)||0; if(!esPolietileno(l.cont)) return u*(num(l.cambio)+num(l.eliminacion)); /* la retirada definitiva solo se anota */ return u * num(l.precio) * factor(l); }
 function calcular(o){
-  const serv = o.lineas.reduce((a,l)=>a+subtotalLinea(l),0);
+  const serv = o.lineas.filter(l=>esPolietileno(l.cont)).reduce((a,l)=>a+subtotalLinea(l),0);
+  const cajas = o.lineas.filter(l=>!esPolietileno(l.cont)).reduce((a,l)=>a+subtotalLinea(l),0);
   const uds = o.lineas.reduce((a,l)=>a+(parseInt(l.uds)||0),0);
   const alq = uds*num(o.alquiler);
   const hoja = o.hoja?HOJA_PRECIO:0;
-  return {serv, uds, alq, hoja, total:serv+alq+hoja};
+  return {serv, cajas, uds, alq, hoja, total:serv+cajas+alq+hoja};
 }
 
 /* =========================================================
@@ -706,15 +727,19 @@ function renderLineas(){
   const o = ofertas[idx]; const box=$("#lines"); box.innerHTML="";
   o.lineas.forEach((l,i)=>{
     const c = contById(l.cont);
-    const row=document.createElement("div"); row.className="line"; row.dataset.i=i;
+    const row=document.createElement("div"); row.className="line"+(esPolietileno(l.cont)?"":" alt"); row.dataset.i=i;
     row.innerHTML = `
       <div class="cell" data-label="Uds."><input class="num" type="text" inputmode="numeric" data-f="uds" value="${parseInt(l.uds)||0}" aria-label="Unidades"></div>
       <div class="cell" data-label="Contenedor"><button class="contbtn" data-f="cont" type="button">${contIcon(c,l.residuo)}<span>${esc(nombreCont(c,l.residuo))}</span><span class="chev">▾</span></button></div>
-      <div class="row2">
+      <div class="row2 ${esPolietileno(l.cont)?"":"alt"}">
       <div class="cell" data-label="Residuo"><select data-f="residuo" aria-label="Residuo">${RESIDUOS.map(r=>`<option ${r===l.residuo?"selected":""}>${r}</option>`).join("")}</select></div>
+      ${esPolietileno(l.cont)?`
       <div class="cell" data-label="Servicio"><select data-f="frec" aria-label="Frecuencia">${FRECUENCIAS.map(([v,t])=>`<option value="${v}" ${v===l.frec?"selected":""}>${t}</option>`).join("")}</select></div>
       <div class="cell ${l.frec==="SEMANAL"?"":"hidden"}" data-label="/sem."><select data-f="nsem" aria-label="Vaciadas por semana">${[1,2,3,4,5,6,7].map(n=>`<option ${n==l.nsem?"selected":""}>${n}</option>`).join("")}</select></div>
-      <div class="cell" data-label="€/vaciada"><input class="num" type="text" inputmode="decimal" data-f="precio" value="${esc(l.precio||"0,00")}" aria-label="Precio por vaciada"></div>
+      <div class="cell" data-label="€/vaciada"><input class="num" type="text" inputmode="decimal" data-f="precio" value="${esc(l.precio||"0,00")}" aria-label="Precio por vaciada"></div>`:`
+      <div class="cell" data-label="Cambio €"><input class="num" type="text" inputmode="decimal" data-f="cambio" value="${esc(l.cambio||"0,00")}" aria-label="Precio cambio"></div>
+      <div class="cell" data-label="Retirada def. € (no suma)"><input class="num" type="text" inputmode="decimal" data-f="retirada" value="${esc(l.retirada||"0,00")}" aria-label="Precio retirada definitiva"></div>
+      <div class="cell" data-label="Eliminación del residuo €"><input class="num" type="text" inputmode="decimal" data-f="eliminacion" value="${esc(l.eliminacion||"0,00")}" aria-label="Precio eliminación del residuo"></div>`}
       <div class="sub" data-sub>${eur(subtotalLinea(l))}</div>
       </div>
       <button class="del" type="button" data-del aria-label="Eliminar línea"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12h10l1-12M9 7V4h6v3"/></svg></button>`;
@@ -724,7 +749,7 @@ function renderLineas(){
 
 function renderTotales(){
   const o=ofertas[idx]; const t=calcular(o);
-  $("#tServ").textContent=eur(t.serv); $("#tAlq").textContent=eur(t.alq); $("#tHoja").textContent=eur(t.hoja); $("#tTotal").textContent=eur(t.total);
+  $("#tServ").textContent=eur(t.serv); $("#tCajas").textContent=eur(t.cajas); $("#rowCajas").style.display = o.lineas.some(l=>!esPolietileno(l.cont))?"":"none"; $("#tAlq").textContent=eur(t.alq); $("#tHoja").textContent=eur(t.hoja); $("#tTotal").textContent=eur(t.total);
   $("#hintAlq").textContent = t.uds? `(${t.uds} cont. × ${eur(num(o.alquiler))})` : "";
   const sem = o.lineas.some(l=>l.frec==="SEMANAL");
   $("#hintServ").textContent = sem ? `(semanal = ${SEMANAS_MES.toLocaleString("es-ES")} semanas/mes)` : "";
@@ -747,7 +772,7 @@ $("#alquiler").addEventListener("blur",e=>{ const v=num(e.target.value); e.targe
 $("#hoja").addEventListener("change",e=>{ ofertas[idx].hoja=e.target.checked; touch(); renderTotales(); save(); });
 
 /* Casillas numéricas: al tocar, se vacían si están a 0 o se selecciona todo */
-const SEL_NUM='.line input[data-f="uds"], .line input[data-f="precio"], #alquiler';
+const SEL_NUM='.line input[data-f="uds"], .line input[data-f="precio"], .line input[data-f="cambio"], .line input[data-f="retirada"], .line input[data-f="eliminacion"], #alquiler';
 function focoNumerico(el){ if(num(el.value)===0){ el.value=""; return; } const sel=()=>{ try{ el.setSelectionRange(0, el.value.length); }catch(e){} }; sel(); setTimeout(sel,0);
   // iOS deshace la selección en el mouseup/touchend posterior al foco: lo anulamos una vez
   const stop=ev=>{ ev.preventDefault(); el.removeEventListener("mouseup",stop); el.removeEventListener("touchend",stop); }; el.addEventListener("mouseup",stop,{once:true}); el.addEventListener("touchend",stop,{once:true}); setTimeout(()=>{ el.removeEventListener("mouseup",stop); el.removeEventListener("touchend",stop); },400); }
@@ -758,6 +783,7 @@ $("#lines").addEventListener("input",e=>{
   const row=e.target.closest(".line"); if(!row) return; const l=ofertas[idx].lineas[row.dataset.i]; const f=e.target.dataset.f;
   if(f==="uds"){ let v=parseInt(e.target.value.replace(/\D/g,""))||0; if(v>500){v=500; e.target.value=500; toast("Máximo 500 unidades");} l.uds=v; }
   else if(f==="precio"){ l.precio=e.target.value; }
+  else if(f==="cambio"||f==="retirada"||f==="eliminacion"){ l[f]=e.target.value; }
   touch(); renderTotales(); save();
 });
 $("#lines").addEventListener("change",e=>{
@@ -768,6 +794,8 @@ $("#lines").addEventListener("change",e=>{
   touch(); renderTotales(); save();
 });
 $("#lines").addEventListener("focusout",e=>{
+  const fN=e.target.dataset.f;
+  if(fN==="cambio"||fN==="retirada"||fN==="eliminacion"){ const row=e.target.closest(".line"); const l=ofertas[idx].lineas[row.dataset.i]; const v=num(e.target.value); e.target.value=v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}); l[fN]=e.target.value; save(); }
   if(e.target.dataset.f==="precio"){ const row=e.target.closest(".line"); const l=ofertas[idx].lineas[row.dataset.i]; const v=num(e.target.value);
     e.target.value = v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}); l.precio=e.target.value; save(); }
   if(e.target.dataset.f==="uds"){ const row=e.target.closest(".line"); const l=ofertas[idx].lineas[row.dataset.i]; if(!l.uds){ l.uds=0; e.target.value=0; renderTotales(); save(); } }
@@ -830,7 +858,7 @@ function renderResults(qraw){
   // en búsqueda por fechas, mostrar la fecha que coincide
   const fechaMostrar=o=>{ if(!d1&&!d2) return new Date(o.modificada).toLocaleDateString("es-ES"); const fs=[{f:dia(o.creada),t:"creada"},...(o.entradas||[]).map(e=>({f:dia(e.fecha),t:"observación"})),{f:dia(o.modificada),t:"modificada"}].filter(x=>x.f&&(!d1||x.f>=d1)&&(!d2||x.f<=d2)); return fs.length? `${new Date(fs[0].f+"T00:00").toLocaleDateString("es-ES")} · ${fs[0].t}`:""; };
   ul.innerHTML = list.map(({o,i})=>{ const t=calcular(o); return `<li data-i="${i}">
-      <div><div class="n">${hl(o.empresa||"(sin nombre)",q)} ${o.enviada?'<span class="tag si" title="Enviada">✓ Enviada</span>':""} ${o.estado==="no"?'<span class="tag no">✕ No interesado</span>':o.estado==="si"?'<span class="tag si">✓ Aceptada</span>':""}</div><div class="m">${hl(o.cp,q)} ${hl(o.poblacion,q)} ${o.contacto?"· "+esc(o.contacto):""}</div></div>
+      <div><div class="n">${hl(o.empresa||"(sin nombre)",q)} ${o.enviada?'<span class="tag si" title="Enviada">✓ Enviada</span>':""} ${o.estado==="no"?'<span class="tag no">✕ No interesado</span>':o.estado==="si"?'<span class="tag si">✓ Interesado</span>':""}</div><div class="m">${hl(o.cp,q)} ${hl(o.poblacion,q)} ${o.contacto?"· "+esc(o.contacto):""}</div></div>
       <div style="text-align:right"><div class="n">${eur(t.total)}</div><div class="m">${fechaMostrar(o)}</div></div></li>`; }).join("");
 }
 $("#results").addEventListener("click",e=>{ const li=e.target.closest("li[data-i]"); if(!li) return; close("#mSearch"); go(+li.dataset.i, +li.dataset.i>idx?1:-1); });
@@ -851,7 +879,7 @@ function renderTodas(){
   $("#todasN").textContent=`(${list.length}${letraTodas?" de "+ofertas.length:""})`;
   if(!list.length){ $("#todasList").innerHTML=`<li class="empty" style="display:block;border:none">No hay ofertas${letraTodas?" que empiecen por «"+letraTodas+"»":""}</li>`; return; }
   $("#todasList").innerHTML=list.map(({o,i})=>{ const t=calcular(o); return `<li data-i="${i}">
-      <div><div class="n">${esc(o.empresa||"(sin nombre)")} ${o.enviada?'<span class="tag si">✓ Enviada</span>':""} ${o.estado==="no"?'<span class="tag no">✕ No interesado</span>':o.estado==="si"?'<span class="tag si">✓ Aceptada</span>':""}</div>
+      <div><div class="n">${esc(o.empresa||"(sin nombre)")} ${o.enviada?'<span class="tag si">✓ Enviada</span>':""} ${o.estado==="no"?'<span class="tag no">✕ No interesado</span>':o.estado==="si"?'<span class="tag si">✓ Interesado</span>':""}</div>
       <div class="m">${esc([o.cp,o.poblacion].filter(Boolean).join(" "))}${o.contacto?" · "+esc(o.contacto):""}${o.empresaTipo?" · "+(o.empresaTipo==="RVERD"?"R. VERD":"DICIMO"):""}</div></div>
       <div style="text-align:right"><div class="n">${eur(t.total)}</div><div class="m">${new Date(o.creada).toLocaleDateString("es-ES")}</div></div></li>`; }).join("");
 }
@@ -917,7 +945,7 @@ $("#obsAdd").addEventListener("click",()=>{ const t=$("#obsNew").value.trim(); i
 $("#entradas").addEventListener("click",e=>{ const b=e.target.closest("[data-del]"); if(!b) return; const row=b.closest(".entrada"); const o=ofertas[idx];
   $("#confirmTitle").textContent="Eliminar observación"; $("#confirmText").textContent="Se eliminará esta entrada de observaciones."; $("#confirmGo").dataset.mode="entrada"; $("#confirmGo").dataset.id=row.dataset.id; open("#mConfirm"); });
 function renderEstado(){ const o=ofertas[idx]; $("#estNo").classList.toggle("on",o.estado==="no"); $("#estSi").classList.toggle("on",o.estado==="si");
-  const t=$("#tagEstado"); t.className="tag"+(o.estado?" on "+o.estado:""); t.textContent=o.estado==="no"?"✕ No interesado":o.estado==="si"?"✓ Aceptada":""; t.dataset.s=o.estado==="no"?"✕":"✓"; }
+  const t=$("#tagEstado"); t.className="tag"+(o.estado?" on "+o.estado:""); t.textContent=o.estado==="no"?"✕ No interesado":o.estado==="si"?"✓ Interesado":""; t.dataset.s=o.estado==="no"?"✕":"✓"; }
 function setEstado(v){ const o=ofertas[idx]; o.estado = o.estado===v? null : v; touch(); renderEstado(); save();
   if(o.estado==="no"){ $("#obsNew").placeholder="Motivo por el que no está interesado…"; $("#obsNew").focus(); } else { $("#obsNew").placeholder="Nueva observación: notas de la visita, condiciones, motivo…"; } }
 $("#estNo").addEventListener("click",()=>setEstado("no"));
