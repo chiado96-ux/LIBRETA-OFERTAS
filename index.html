@@ -222,8 +222,16 @@
   .viewer .top{border-color:#333;color:#fff}
   .viewer .top .ibtn{background:#222;border-color:#333}
   .viewer .top .ibtn svg{stroke:#fff}
-  .viewer .body{display:flex;align-items:center;justify-content:center;padding:0;background:#111}
-  .viewer img{max-width:100%;max-height:calc(100vh - 200px);display:block}
+  .viewer .body{position:relative;display:flex;align-items:center;justify-content:center;padding:0;background:#111;overflow:hidden;touch-action:none;height:calc(100vh - 200px);max-height:calc(100vh - 200px)}
+  .viewer img{max-width:100%;max-height:100%;display:block;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;transform-origin:center center;transition:transform .12s ease-out;will-change:transform}
+  .viewer img.drag{transition:none}
+  .viewer .nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:64px;border:none;border-radius:12px;background:rgba(0,0,0,.45);color:#fff;display:flex;align-items:center;justify-content:center;z-index:2}
+  .viewer .nav svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .viewer .nav.prev{left:8px}.viewer .nav.next{right:8px}
+  .viewer .nav:disabled{opacity:.25}
+  .viewer .count{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:#fff;font-size:13px;padding:4px 10px;border-radius:10px;z-index:2}
+  .viewer .zoomhint{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:#fff;font-size:12px;padding:4px 10px;border-radius:10px;z-index:2;opacity:0;transition:opacity .3s}
+  .viewer .zoomhint.on{opacity:1}
   .viewer .acts{display:flex;gap:10px;padding:12px 16px;background:#111;border-top:1px solid #333}
   .viewer .acts button{flex:1;height:46px;border-radius:12px;border:1px solid #333;background:#222;color:#fff;font-weight:500}
   .viewer .acts button.dangerb{color:#ff8a76}
@@ -372,7 +380,7 @@
       <button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button>
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
-    <div class="lfoot">v2.7</div>
+    <div class="lfoot">v2.8</div>
   </div>
 </div>
 <header>
@@ -503,7 +511,13 @@
 <div class="modal viewer" id="mFoto">
   <div class="sheet">
     <div class="top"><h3 id="fotoTitle">Foto</h3><button class="ibtn" data-close><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="body"><img id="fotoImg" alt="Foto de la oferta"></div>
+    <div class="body" id="fotoBody">
+      <button class="nav prev" id="fotoPrev" type="button" aria-label="Foto anterior"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <img id="fotoImg" alt="Foto de la oferta">
+      <button class="nav next" id="fotoNext" type="button" aria-label="Foto siguiente"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      <div class="count" id="fotoCount"></div>
+      <div class="zoomhint" id="zoomHint">Doble toque o pellizca para ampliar</div>
+    </div>
     <div class="acts"><button id="fotoShare">Compartir</button><button id="fotoDel" class="dangerb">Eliminar</button></div>
   </div>
 </div>
@@ -990,8 +1004,38 @@ $("#fCam").addEventListener("change",e=>{ if(e.target.files.length) añadirFotos
 $("#fGal").addEventListener("change",e=>{ if(e.target.files.length) añadirFotos([...e.target.files]); e.target.value=""; });
 $("#fotos").addEventListener("click",e=>{ const b=e.target.closest(".foto"); if(!b) return;
   if(modoSel){ const id=b.dataset.id; if(selFotos.has(id)) selFotos.delete(id); else selFotos.add(id); b.classList.toggle("sel",selFotos.has(id)); actualizarSel(); return; }
-  fotoAbierta=fotosActual.find(f=>f.id===b.dataset.id); if(!fotoAbierta) return;
-  $("#fotoImg").src=fotoAbierta.data; $("#fotoTitle").textContent=(ofertas[idx].empresa||"Oferta")+" · "+new Date(fotoAbierta.fecha).toLocaleDateString("es-ES"); open("#mFoto"); });
+  const i=fotosActual.findIndex(f=>f.id===b.dataset.id); if(i<0) return; abrirFoto(i); open("#mFoto"); const z=$("#zoomHint"); z.classList.add("on"); setTimeout(()=>z.classList.remove("on"),1800); });
+let fotoIdx=0;
+function abrirFoto(i){ fotoIdx=Math.max(0,Math.min(i,fotosActual.length-1)); fotoAbierta=fotosActual[fotoIdx]; if(!fotoAbierta) return; resetZoom();
+  $("#fotoImg").src=fotoAbierta.data; $("#fotoTitle").textContent=(ofertas[idx].empresa||"Oferta")+" · "+new Date(fotoAbierta.fecha).toLocaleDateString("es-ES");
+  $("#fotoCount").textContent=`${fotoIdx+1} / ${fotosActual.length}`; $("#fotoPrev").disabled=fotoIdx===0; $("#fotoNext").disabled=fotoIdx>=fotosActual.length-1; }
+$("#fotoPrev").addEventListener("click",()=>abrirFoto(fotoIdx-1)); $("#fotoNext").addEventListener("click",()=>abrirFoto(fotoIdx+1));
+document.addEventListener("keydown",e=>{ if(!$("#mFoto").classList.contains("open")) return; if(e.key==="ArrowLeft") abrirFoto(fotoIdx-1); if(e.key==="ArrowRight") abrirFoto(fotoIdx+1); if(e.key==="Escape") close("#mFoto"); });
+/* Zoom (pellizco, doble toque) y arrastre; deslizar para cambiar de foto cuando no hay zoom */
+let Z={s:1,x:0,y:0}; const IMGV=$("#fotoImg");
+function aplicarZoom(){ IMGV.style.transform=`translate(${Z.x}px,${Z.y}px) scale(${Z.s})`; }
+function resetZoom(){ Z={s:1,x:0,y:0}; IMGV.classList.remove("drag"); aplicarZoom(); }
+function limitar(){ const r=$("#fotoBody").getBoundingClientRect(); const w=IMGV.clientWidth*Z.s, hgt=IMGV.clientHeight*Z.s; const mx=Math.max(0,(w-r.width)/2), my=Math.max(0,(hgt-r.height)/2); Z.x=Math.max(-mx,Math.min(mx,Z.x)); Z.y=Math.max(-my,Math.min(my,Z.y)); }
+(function(){
+  const body=$("#fotoBody"); let t0=null, start=null, lastTap=0, pinch=null, moved=false;
+  const dist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+  body.addEventListener("touchstart",e=>{ if(e.target.closest(".nav")) return; moved=false;
+    if(e.touches.length===2){ pinch={d:dist(e.touches[0],e.touches[1]), s:Z.s}; IMGV.classList.add("drag"); return; }
+    const t=e.touches[0]; start={x:t.clientX,y:t.clientY,zx:Z.x,zy:Z.y,time:Date.now()}; IMGV.classList.add("drag"); },{passive:true});
+  body.addEventListener("touchmove",e=>{ if(e.target.closest(".nav")) return; e.preventDefault(); moved=true;
+    if(e.touches.length===2 && pinch){ Z.s=Math.max(1,Math.min(5,pinch.s*dist(e.touches[0],e.touches[1])/pinch.d)); limitar(); aplicarZoom(); return; }
+    if(!start) return; const t=e.touches[0]; if(Z.s>1){ Z.x=start.zx+(t.clientX-start.x); Z.y=start.zy+(t.clientY-start.y); limitar(); aplicarZoom(); }
+    else { IMGV.style.transform=`translate(${(t.clientX-start.x)*0.6}px,0)`; } },{passive:false});
+  body.addEventListener("touchend",e=>{ if(e.target.closest(".nav")) return; IMGV.classList.remove("drag");
+    if(pinch){ pinch=null; if(Z.s<1.05) resetZoom(); return; }
+    if(!start) return; const t=e.changedTouches[0]; const dx=t.clientX-start.x, dy=t.clientY-start.y;
+    if(Z.s===1){ if(Math.abs(dx)>60 && Math.abs(dy)<80){ if(dx<0) abrirFoto(fotoIdx+1); else abrirFoto(fotoIdx-1); } else aplicarZoom(); }
+    if(!moved && Math.abs(dx)<10 && Math.abs(dy)<10){ const now=Date.now(); if(now-lastTap<320){ if(Z.s>1) resetZoom(); else { Z.s=2.5; const r=body.getBoundingClientRect(); Z.x=(r.left+r.width/2-t.clientX)*1.5; Z.y=(r.top+r.height/2-t.clientY)*1.5; limitar(); aplicarZoom(); } lastTap=0; } else lastTap=now; }
+    start=null; },{passive:true});
+  // ratón (ordenador): doble clic amplía, rueda hace zoom
+  body.addEventListener("dblclick",e=>{ if(Z.s>1) resetZoom(); else { Z.s=2.5; limitar(); aplicarZoom(); } });
+  body.addEventListener("wheel",e=>{ e.preventDefault(); Z.s=Math.max(1,Math.min(5,Z.s*(e.deltaY<0?1.1:0.9))); if(Z.s<1.05) Z={s:1,x:0,y:0}; limitar(); aplicarZoom(); },{passive:false});
+})();
 $("#fotoShare").addEventListener("click",async()=>{
   if(fotoAbierta) compartirFotos([fotoAbierta]);
 });
