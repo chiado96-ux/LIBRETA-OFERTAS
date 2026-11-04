@@ -402,7 +402,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v3.3</div>
+    <div class="lfoot">v3.4</div>
   </div>
 </div>
 <header>
@@ -803,10 +803,9 @@ function ajustar(el){ if(!el.classList.contains("auto")) return; el.style.height
 function actualizarMail(){ const m=(ofertas[idx].email||"").trim(); const a=$("#mailto"); if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){ const o=ofertas[idx]; a.href="#"; a.classList.remove("off"); } else { a.href="#"; a.classList.add("off"); } }
 function actualizarMapa(){ const o=ofertas[idx]; const partes=[[o.calle,o.numero].filter(x=>(x||"").trim()).join(" "), [o.cp,o.poblacion].filter(x=>(x||"").trim()).join(" "), o.provincia].map(x=>(x||"").trim()).filter(Boolean);
   const a=$("#mapa"); if(partes.length && (o.poblacion||o.cp)){ a.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(partes.join(", ")+", España"); a.classList.remove("off"); } else { a.href="#"; a.classList.add("off"); } }
-$("#mailto").addEventListener("click",async e=>{ e.preventDefault(); if($("#mailto").classList.contains("off")) return;
-  const o=ofertas[idx]; const to=(o.email||"").trim(); const subj="Oferta gestión de residuos"+(o.empresa?" · "+o.empresa:"");
-  if(navigator.share){ try{ await navigator.share({title:subj, text:to}); return; }catch(err){ if(err && err.name==="AbortError") return; } }
-  try{ await navigator.clipboard.writeText(to); toast("Dirección copiada: "+to); }catch(err){ toast(to); }
+$("#mailto").addEventListener("click",e=>{ e.preventDefault(); if($("#mailto").classList.contains("off")) return;
+  const o=ofertas[idx]; const to=(o.email||"").trim(); const subj="Oferta gestión de residuos"+(o.empresa?" · "+o.empresa:""); const body="Hola"+(o.contacto?" "+o.contacto:"")+",\n\n";
+  window.location.href="mailto:"+to+"?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body);
 });
 $("#mapa").addEventListener("click",e=>{ if($("#mapa").classList.contains("off")) e.preventDefault(); });
 function actualizarLlamar(){ const t=(ofertas[idx].telefono||"").replace(/[^\d+]/g,""); const a=$("#llamar"); if(t.length>=6){ a.href="tel:"+t; a.classList.remove("off"); } else { a.href="#"; a.classList.add("off"); } }
