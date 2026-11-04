@@ -402,7 +402,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v3.2</div>
+    <div class="lfoot">v3.3</div>
   </div>
 </div>
 <header>
@@ -528,20 +528,6 @@
 <div class="banner" id="banner">
   <div class="t"><b id="bTxt"></b><span id="bSub"></span></div>
   <button id="bVer">Ver</button><button class="primary" id="bOk">Hecho</button>
-</div>
-
-<!-- Elegir app de correo -->
-<div class="modal" id="mMail">
-  <div class="sheet" style="max-width:420px">
-    <div class="top"><h3>Escribir a <span id="mailDest" style="font-weight:400;color:var(--muted)"></span></h3><button class="ibtn" data-close><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="body menu">
-      <a class="mbtn" id="mOutlook" href="#">📨&nbsp; Outlook</a>
-      <a class="mbtn" id="mGmail" href="#">✉️&nbsp; Gmail</a>
-      <a class="mbtn" id="mMailApp" href="#">📧&nbsp; Mail (app del dispositivo)</a>
-      <button id="mOtra" type="button">⋯&nbsp; Otra app… (compartir)</button>
-      <button id="mCopiar" type="button">⎘&nbsp; Copiar dirección</button>
-    </div>
-  </div>
 </div>
 
 <!-- Visor de foto -->
@@ -817,15 +803,11 @@ function ajustar(el){ if(!el.classList.contains("auto")) return; el.style.height
 function actualizarMail(){ const m=(ofertas[idx].email||"").trim(); const a=$("#mailto"); if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){ const o=ofertas[idx]; a.href="#"; a.classList.remove("off"); } else { a.href="#"; a.classList.add("off"); } }
 function actualizarMapa(){ const o=ofertas[idx]; const partes=[[o.calle,o.numero].filter(x=>(x||"").trim()).join(" "), [o.cp,o.poblacion].filter(x=>(x||"").trim()).join(" "), o.provincia].map(x=>(x||"").trim()).filter(Boolean);
   const a=$("#mapa"); if(partes.length && (o.poblacion||o.cp)){ a.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(partes.join(", ")+", España"); a.classList.remove("off"); } else { a.href="#"; a.classList.add("off"); } }
-$("#mailto").addEventListener("click",e=>{ e.preventDefault(); if($("#mailto").classList.contains("off")) return; abrirMenuMail(); });
-function abrirMenuMail(){ const o=ofertas[idx]; const to=(o.email||"").trim(); const subj="Oferta gestión de residuos"+(o.empresa?" · "+o.empresa:""); const body="Hola"+(o.contacto?" "+o.contacto:"")+",\n\n";
-  $("#mailDest").textContent=to;
-  $("#mOutlook").href="ms-outlook://compose?to="+encodeURIComponent(to)+"&subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body);
-  $("#mGmail").href="googlegmail:///co?to="+encodeURIComponent(to)+"&subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body);
-  $("#mMailApp").href="mailto:"+encodeURIComponent(to)+"?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body);
-  open("#mMail"); }
-$("#mOutlook").addEventListener("click",()=>{ setTimeout(()=>{ if(!document.hidden) toast("Si no se ha abierto, Outlook no está instalado en este dispositivo"); },1500); close("#mMail"); });
-$("#mGmail").addEventListener("click",()=>{ setTimeout(()=>{ if(!document.hidden) toast("Si no se ha abierto, Gmail no está instalado en este dispositivo"); },1500); close("#mMail"); });
+$("#mailto").addEventListener("click",async e=>{ e.preventDefault(); if($("#mailto").classList.contains("off")) return;
+  const o=ofertas[idx]; const to=(o.email||"").trim(); const subj="Oferta gestión de residuos"+(o.empresa?" · "+o.empresa:"");
+  if(navigator.share){ try{ await navigator.share({title:subj, text:to}); return; }catch(err){ if(err && err.name==="AbortError") return; } }
+  try{ await navigator.clipboard.writeText(to); toast("Dirección copiada: "+to); }catch(err){ toast(to); }
+});
 $("#mMailApp").addEventListener("click",()=>close("#mMail"));
 $("#mOtra").addEventListener("click",async()=>{ const o=ofertas[idx]; const to=(o.email||"").trim(); close("#mMail");
   if(navigator.share){ try{ await navigator.share({title:"Oferta gestión de residuos"+(o.empresa?" · "+o.empresa:""), text:to}); }catch(e){} } else toast("Este navegador no permite compartir"); });
