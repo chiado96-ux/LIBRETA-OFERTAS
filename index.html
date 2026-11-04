@@ -401,7 +401,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v3.0</div>
+    <div class="lfoot">v3.1</div>
   </div>
 </div>
 <header>
@@ -432,13 +432,13 @@
       <div class="f c6"><label for="empresa">Nombre de la empresa</label><textarea class="auto" rows="1" id="empresa" data-k="empresa" autocapitalize="characters" autocomplete="off"></textarea></div>
       <div class="f c3"><label for="nif">NIF</label><textarea class="auto" rows="1" id="nif" data-k="nif" autocapitalize="characters" autocomplete="off"></textarea></div>
       <div class="f c3"><label for="codemp">Cód. empresa</label><textarea class="auto" rows="1" id="codemp" data-k="codemp" autocapitalize="characters" autocomplete="off"></textarea></div>
-      <div class="f c8"><label for="calle">Calle</label><textarea class="auto" rows="1" id="calle" data-k="calle" autocomplete="off"></textarea></div>
+      <div class="f c8"><label for="calle">Calle</label><div class="tel"><textarea class="auto" rows="1" id="calle" data-k="calle" autocomplete="off"></textarea><a id="mapa" class="off" href="#" target="_blank" rel="noopener" aria-label="Abrir en Google Maps"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.5"/></svg></a></div></div>
       <div class="f c4"><label for="numero">Número</label><textarea class="auto" rows="1" id="numero" data-k="numero" autocomplete="off"></textarea></div>
       <div class="f c3"><label for="cp">Código postal</label><textarea class="auto" rows="1" id="cp" data-k="cp" inputmode="numeric" autocomplete="off"></textarea></div>
       <div class="f c6"><label for="poblacion">Población</label><textarea class="auto" rows="1" id="poblacion" data-k="poblacion" autocomplete="off"></textarea></div>
       <div class="f c3"><label for="provincia">Provincia</label><textarea class="auto" rows="1" id="provincia" data-k="provincia" autocomplete="off"></textarea></div>
       <div class="f c4"><label for="telefono">Teléfono</label><div class="tel"><textarea class="auto" rows="1" id="telefono" data-k="telefono" inputmode="tel" autocomplete="off"></textarea><a id="llamar" class="off" href="#" aria-label="Llamar"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></a></div></div>
-      <div class="f c4"><label for="email">Email</label><textarea class="auto" rows="1" id="email" data-k="email" inputmode="email" autocapitalize="none" autocomplete="off"></textarea></div>
+      <div class="f c4"><label for="email">Email</label><div class="tel"><textarea class="auto" rows="1" id="email" data-k="email" inputmode="email" autocapitalize="none" autocomplete="off"></textarea><a id="mailto" class="off" href="#" aria-label="Escribir email"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></a></div></div>
       <div class="f c4"><label for="contacto">Persona de contacto</label><textarea class="auto" rows="1" id="contacto" data-k="contacto" autocomplete="off"></textarea></div>
     </div>
   </section>
@@ -748,7 +748,7 @@ function render(){
   $("#btnPrev").disabled = idx===0; $("#btnPrev").style.opacity = idx===0?.35:1;
   $("#btnNext").disabled = idx===ofertas.length-1; $("#btnNext").style.opacity = idx===ofertas.length-1?.35:1;
   document.querySelectorAll("[data-k]").forEach(el=>{ el.value = o[el.dataset.k] || ""; ajustar(el); });
-  actualizarLlamar();
+  actualizarLlamar(); actualizarMail(); actualizarMapa();
   $("#alquiler").value = o.alquiler || "0,00";
   $("#hoja").checked = !!o.hoja;
   renderLineas();
@@ -799,11 +799,16 @@ function renderTotales(){
    ========================================================= */
 function touch(){ ofertas[idx].modificada=new Date().toISOString(); }
 function ajustar(el){ if(!el.classList.contains("auto")) return; el.style.height="44px"; el.style.height=Math.max(44, el.scrollHeight)+"px"; }
+function actualizarMail(){ const m=(ofertas[idx].email||"").trim(); const a=$("#mailto"); if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){ const o=ofertas[idx]; a.href="mailto:"+encodeURIComponent(m)+"?subject="+encodeURIComponent("Oferta gestión de residuos"+(o.empresa?" · "+o.empresa:"")); a.classList.remove("off"); } else { a.href="#"; a.classList.add("off"); } }
+function actualizarMapa(){ const o=ofertas[idx]; const partes=[[o.calle,o.numero].filter(x=>(x||"").trim()).join(" "), [o.cp,o.poblacion].filter(x=>(x||"").trim()).join(" "), o.provincia].map(x=>(x||"").trim()).filter(Boolean);
+  const a=$("#mapa"); if(partes.length && (o.poblacion||o.cp)){ a.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(partes.join(", ")+", España"); a.classList.remove("off"); } else { a.href="#"; a.classList.add("off"); } }
+$("#mailto").addEventListener("click",e=>{ if($("#mailto").classList.contains("off")) e.preventDefault(); });
+$("#mapa").addEventListener("click",e=>{ if($("#mapa").classList.contains("off")) e.preventDefault(); });
 function actualizarLlamar(){ const t=(ofertas[idx].telefono||"").replace(/[^\d+]/g,""); const a=$("#llamar"); if(t.length>=6){ a.href="tel:"+t; a.classList.remove("off"); } else { a.href="#"; a.classList.add("off"); } }
 $("#llamar").addEventListener("click",e=>{ if($("#llamar").classList.contains("off")) e.preventDefault(); });
 document.querySelectorAll("textarea.auto").forEach(el=>{ el.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); el.blur(); } }); el.addEventListener("input",()=>ajustar(el)); });
 document.querySelectorAll("[data-k]").forEach(el=>{
-  el.addEventListener("input",()=>{ ofertas[idx][el.dataset.k]=el.value.replace(/\n/g," "); if(el.dataset.k==="telefono") actualizarLlamar(); touch(); if(el.dataset.k==="empresa") $("#title").textContent=el.value.trim()||"Nueva oferta"; save(); });
+  el.addEventListener("input",()=>{ ofertas[idx][el.dataset.k]=el.value.replace(/\n/g," "); if(el.dataset.k==="telefono") actualizarLlamar(); if(el.dataset.k==="email"||el.dataset.k==="empresa") actualizarMail(); if(["calle","numero","cp","poblacion","provincia"].includes(el.dataset.k)) actualizarMapa(); touch(); if(el.dataset.k==="empresa") $("#title").textContent=el.value.trim()||"Nueva oferta"; save(); });
 });
 $("#alquiler").addEventListener("input",e=>{ ofertas[idx].alquiler=e.target.value; touch(); renderTotales(); save(); });
 $("#alquiler").addEventListener("blur",e=>{ const v=num(e.target.value); e.target.value = v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}); ofertas[idx].alquiler=e.target.value; save(); });
