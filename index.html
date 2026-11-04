@@ -808,10 +808,6 @@ $("#mailto").addEventListener("click",async e=>{ e.preventDefault(); if($("#mail
   if(navigator.share){ try{ await navigator.share({title:subj, text:to}); return; }catch(err){ if(err && err.name==="AbortError") return; } }
   try{ await navigator.clipboard.writeText(to); toast("Dirección copiada: "+to); }catch(err){ toast(to); }
 });
-$("#mMailApp").addEventListener("click",()=>close("#mMail"));
-$("#mOtra").addEventListener("click",async()=>{ const o=ofertas[idx]; const to=(o.email||"").trim(); close("#mMail");
-  if(navigator.share){ try{ await navigator.share({title:"Oferta gestión de residuos"+(o.empresa?" · "+o.empresa:""), text:to}); }catch(e){} } else toast("Este navegador no permite compartir"); });
-$("#mCopiar").addEventListener("click",async()=>{ const to=(ofertas[idx].email||"").trim(); try{ await navigator.clipboard.writeText(to); toast("Dirección copiada"); }catch(e){ toast("No se pudo copiar"); } close("#mMail"); });
 $("#mapa").addEventListener("click",e=>{ if($("#mapa").classList.contains("off")) e.preventDefault(); });
 function actualizarLlamar(){ const t=(ofertas[idx].telefono||"").replace(/[^\d+]/g,""); const a=$("#llamar"); if(t.length>=6){ a.href="tel:"+t; a.classList.remove("off"); } else { a.href="#"; a.classList.add("off"); } }
 $("#llamar").addEventListener("click",e=>{ if($("#llamar").classList.contains("off")) e.preventDefault(); });
