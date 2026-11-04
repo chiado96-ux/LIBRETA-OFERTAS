@@ -260,6 +260,9 @@
   .aviso.due .fecha{color:var(--danger);font-weight:600}
   .aviso.hecho .txt{text-decoration:line-through;color:var(--muted)}
   .aviso .txt{font-weight:500}
+  .aviso .mid{cursor:pointer}
+  .aviso.editando{background:var(--accent-soft);border-radius:10px}
+  .aform.editando{border-color:var(--accent);box-shadow:var(--focus)}
   .aviso .sub{font-size:13px;color:var(--muted)}
   .aviso .sub a{color:var(--accent);text-decoration:none}
   .aviso .acts{display:flex;gap:4px}
@@ -398,7 +401,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v2.9</div>
+    <div class="lfoot">v3.0</div>
   </div>
 </div>
 <header>
@@ -512,8 +515,9 @@
         <div class="chips" id="chips"></div>
         <input id="aTxt" placeholder="¿Qué tienes que hacer? (p. ej. Llamar a Talleres Puig)" autocomplete="off">
         <div class="r"><input type="date" id="aFecha" aria-label="Fecha"><input type="time" id="aHora" aria-label="Hora (opcional)"></div>
+        <select id="aCliente" aria-label="Cliente (opcional)" style="height:44px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:#fff;width:100%;outline:none;-webkit-appearance:none;appearance:none"></select>
         <label style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)"><input type="checkbox" id="aCal" checked style="width:22px;height:22px;accent-color:var(--accent)"> Añadir también al calendario del dispositivo (alarma del sistema)</label>
-        <button class="go" id="aAdd" type="button">Añadir aviso</button>
+        <div class="r"><button class="go" id="aAdd" type="button">Añadir aviso</button><button type="button" id="aCancel" style="display:none;height:46px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:500">Cancelar edición</button></div>
       </div>
       <div class="alist" id="alist"></div>
     </div>
@@ -1079,7 +1083,7 @@ function renderAvisos(){
   const venc=pend.filter(vencido), prox=pend.filter(a=>!vencido(a)), hechos=avisos.filter(a=>a.hecho).sort((x,y)=>x.fecha<y.fecha?1:-1).slice(0,20);
   const item=a=>{ const o=ofertas.find(x=>x.id===a.ofertaId); return `<div class="aviso ${vencido(a)?"due":""} ${a.hecho?"hecho":""}" data-id="${a.id}">
       <button class="ck" data-act="toggle" type="button" aria-label="Marcar como hecho"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></button>
-      <div><div class="txt">${esc(a.texto)}</div><div class="sub"><span class="fecha">${fFecha(a)}</span>${o?` · <a href="#" data-act="ir">${esc(o.empresa||"(oferta sin nombre)")}</a>`:""}</div></div>
+      <div class="mid" data-act="editar"><div class="txt">${esc(a.texto)}</div><div class="sub"><span class="fecha">${fFecha(a)}</span>${o?` · <a href="#" data-act="ir">${esc(o.empresa||"(oferta sin nombre)")}</a>`:""} · <span style="color:var(--accent)">editar</span></div></div>
       <div class="acts"><button data-act="cal" type="button" aria-label="Añadir al calendario" title="Añadir al calendario del dispositivo"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button><button data-act="del" type="button" aria-label="Eliminar"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12h10l1-12M9 7V4h6v3"/></svg></button></div></div>`; };
   let html="";
   if(venc.length) html+=`<h4>Pendientes de hacer</h4>${venc.map(item).join("")}`;
@@ -1088,16 +1092,26 @@ function renderAvisos(){
   if(!html) html=`<div class="empty">No hay avisos. Crea el primero arriba.</div>`;
   box.innerHTML=html;
 }
-function abrirAvisos(){ const o=ofertas[idx]; const emp=(o.empresa||"").trim();
-  $("#chips").innerHTML=[["Llamar a","📞","Llamar"],["Volver a visitar a","🚚","Visitar"],["Enviar oferta a","✉️","Enviar oferta"],["Hacer seguimiento de","🔁","Seguimiento"]].map(([t,i,l])=>`<button type="button" data-t="${esc(t)}">${i} ${l}</button>`).join("");
-  $("#aTxt").value=""; const d=new Date(); d.setDate(d.getDate()+7); $("#aFecha").value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; $("#aHora").value="";
-  renderAvisos(); open("#mAvisos"); }
+let editandoAviso=null;
+function clientesSelect(sel){ const lista=[...ofertas].filter(o=>(o.empresa||"").trim()).sort((a,b)=>norm(a.empresa).localeCompare(norm(b.empresa),"es"));
+  $("#aCliente").innerHTML=`<option value="">Sin cliente (aviso general)</option>`+lista.map(o=>`<option value="${o.id}" ${o.id===sel?"selected":""}>${esc(o.empresa)}</option>`).join(""); }
+function limpiarForm(){ editandoAviso=null; $("#aTxt").value=""; const d=new Date(); d.setDate(d.getDate()+7); $("#aFecha").value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; $("#aHora").value=""; clientesSelect("");
+  $("#aAdd").textContent="Añadir aviso"; $("#aCancel").style.display="none"; $("#aCal").checked=true; document.querySelector(".aform").classList.remove("editando"); document.querySelectorAll(".aviso.editando").forEach(x=>x.classList.remove("editando")); }
+function editarAviso(a){ editandoAviso=a; $("#aTxt").value=a.texto; $("#aFecha").value=a.fecha; $("#aHora").value=a.hora||""; clientesSelect(a.ofertaId||""); $("#aAdd").textContent="Guardar cambios"; $("#aCancel").style.display=""; $("#aCal").checked=false;
+  document.querySelector(".aform").classList.add("editando"); document.querySelectorAll(".aviso").forEach(x=>x.classList.toggle("editando",x.dataset.id===a.id)); $("#mAvisos .body").scrollTo({top:0,behavior:"smooth"}); $("#aTxt").focus(); }
+function abrirAvisos(){
+  $("#chips").innerHTML=[["Llamar a","📞","Llamar"],["Visitar a","🚚","Visitar"],["Enviar oferta a","✉️","Enviar oferta"],["Seguimiento de","🔁","Seguimiento"]].map(([t,i,l])=>`<button type="button" data-t="${esc(t)}">${i} ${l}</button>`).join("");
+  limpiarForm(); renderAvisos(); open("#mAvisos"); }
+$("#aCancel").addEventListener("click",limpiarForm);
 $("#btnBell").addEventListener("click",abrirAvisos);
-$("#chips").addEventListener("click",e=>{ const b=e.target.closest("[data-t]"); if(!b) return; const emp=(ofertas[idx].empresa||"").trim(); $("#aTxt").value=b.dataset.t+(emp?" "+emp:" "); $("#aTxt").focus(); });
-$("#aAdd").addEventListener("click",()=>{ const texto=$("#aTxt").value.trim(), fecha=$("#aFecha").value, hora=$("#aHora").value; if(!texto){ toast("Escribe qué hay que hacer"); $("#aTxt").focus(); return; } if(!fecha){ toast("Elige una fecha"); return; }
-  const nuevo={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), texto, fecha, hora:hora||"", ofertaId:ofertas[idx].id, creado:new Date().toISOString(), hecho:false, avisado:false};
-  avisos.push(nuevo); saveAvisos(); $("#aTxt").value=""; renderAvisos(); toast("Aviso guardado"); if($("#aCal").checked) exportarICS(nuevo); });
+$("#chips").addEventListener("click",e=>{ const b=e.target.closest("[data-t]"); if(!b) return; const sel=$("#aCliente"); const emp=sel.value? sel.options[sel.selectedIndex].text : ""; const resto=$("#aTxt").value.replace(/^(Llamar a|Visitar a|Enviar oferta a|Seguimiento de)\s*/i,""); $("#aTxt").value=b.dataset.t+" "+(emp||resto); $("#aTxt").focus(); });
+$("#aAdd").addEventListener("click",()=>{ const texto=$("#aTxt").value.trim(), fecha=$("#aFecha").value, hora=$("#aHora").value, ofertaId=$("#aCliente").value||null; if(!texto){ toast("Escribe qué hay que hacer"); $("#aTxt").focus(); return; } if(!fecha){ toast("Elige una fecha"); return; }
+  if(editandoAviso){ const a=editandoAviso; const cambiaFecha = a.fecha!==fecha || (a.hora||"")!==(hora||""); a.texto=texto; a.fecha=fecha; a.hora=hora||""; a.ofertaId=ofertaId; if(cambiaFecha){ a.hecho=false; a.avisado=false; } a.modificado=new Date().toISOString();
+    saveAvisos(); const cal=$("#aCal").checked; limpiarForm(); renderAvisos(); toast("Aviso actualizado"); if(cal) exportarICS(a); return; }
+  const nuevo={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), texto, fecha, hora:hora||"", ofertaId, creado:new Date().toISOString(), hecho:false, avisado:false};
+  avisos.push(nuevo); saveAvisos(); const cal=$("#aCal").checked; limpiarForm(); renderAvisos(); toast("Aviso guardado"); if(cal) exportarICS(nuevo); });
 $("#alist").addEventListener("click",e=>{ const row=e.target.closest(".aviso"); const b=e.target.closest("[data-act]"); if(!row||!b) return; e.preventDefault(); const a=avisos.find(x=>x.id===row.dataset.id); if(!a) return;
+  if(b.dataset.act==="editar"){ editarAviso(a); return; }
   if(b.dataset.act==="toggle"){ a.hecho=!a.hecho; a.hechoEl=a.hecho?new Date().toISOString():null; saveAvisos(); renderAvisos(); }
   if(b.dataset.act==="del"){ avisos=avisos.filter(x=>x.id!==a.id); saveAvisos(); renderAvisos(); toast("Aviso eliminado"); }
   if(b.dataset.act==="ir"){ const i=ofertas.findIndex(x=>x.id===a.ofertaId); if(i>=0){ close("#mAvisos"); go(i,i>idx?1:-1); } }
