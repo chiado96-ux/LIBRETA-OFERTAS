@@ -83,8 +83,8 @@
   .tel a.off{background:#d6dbd8;pointer-events:none}
   .tel a svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   .f input:focus,.f select:focus,.f textarea:focus,.cell input:focus,.cell select:focus{border-color:var(--accent);box-shadow:var(--focus);background:#fff}
-  .c12{grid-column:span 12}.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}.c2{grid-column:span 2}
-  @media(max-width:700px){.c6,.c4,.c3,.c2{grid-column:span 6}.c8,.c12{grid-column:span 12}}
+  .c12{grid-column:span 12}.c8{grid-column:span 8}.c5{grid-column:span 5}.c3x{grid-column:span 3}.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}.c2{grid-column:span 2}
+  @media(max-width:700px){.c6,.c4,.c3,.c3x,.c2{grid-column:span 6}.c5,.c8,.c12{grid-column:span 12}}
 
   /* ---------- Líneas de residuos ---------- */
   .lines-head,.line{display:grid;gap:8px;align-items:center;
@@ -167,6 +167,12 @@
   .switch i::after{content:"";position:absolute;top:2px;left:2px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.2s}
   .switch input:checked+i{background:var(--accent)}
   .switch input:checked+i::after{transform:translateX(20px)}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fbfbfa;flex:none}
+  .seg button{height:42px;min-width:62px;border:none;background:transparent;font-weight:600;font-variant-numeric:tabular-nums;border-left:1px solid var(--line);color:var(--muted)}
+  .seg button:first-child{border-left:none}
+  .seg button.on{background:var(--accent);color:#fff}
+  .extras .rowSup{grid-column:2}
+  @media(max-width:700px){.extras .rowSup{grid-column:1}}
   .totals{display:grid;gap:10px}
   .trow{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line)}
   .trow span:last-child{font-variant-numeric:tabular-nums;font-weight:500}
@@ -402,7 +408,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v3.6</div>
+    <div class="lfoot">v3.7</div>
   </div>
 </div>
 <header>
@@ -430,9 +436,10 @@
   <section class="card">
     <h2>Datos del cliente</h2>
     <div class="grid">
-      <div class="f c6"><label for="empresa">Nombre de la empresa</label><textarea class="auto" rows="1" id="empresa" data-k="empresa" autocapitalize="characters" autocomplete="off"></textarea></div>
-      <div class="f c3"><label for="nif">NIF</label><textarea class="auto" rows="1" id="nif" data-k="nif" autocapitalize="characters" autocomplete="off"></textarea></div>
-      <div class="f c3"><label for="codemp">Cód. empresa</label><textarea class="auto" rows="1" id="codemp" data-k="codemp" autocapitalize="characters" autocomplete="off"></textarea></div>
+      <div class="f c5"><label for="empresa">Nombre de la empresa</label><textarea class="auto" rows="1" id="empresa" data-k="empresa" autocapitalize="characters" autocomplete="off"></textarea></div>
+      <div class="f c3x"><label for="nif">NIF</label><textarea class="auto" rows="1" id="nif" data-k="nif" autocapitalize="characters" autocomplete="off"></textarea></div>
+      <div class="f c2"><label for="codemp">Cód. empresa</label><textarea class="auto" rows="1" id="codemp" data-k="codemp" autocapitalize="characters" autocomplete="off"></textarea></div>
+      <div class="f c2"><label for="cnae">CNAE</label><textarea class="auto" rows="1" id="cnae" data-k="cnae" autocapitalize="characters" autocomplete="off"></textarea></div>
       <div class="f c8"><label for="calle">Calle</label><div class="tel"><textarea class="auto" rows="1" id="calle" data-k="calle" autocomplete="off"></textarea><a id="mapa" class="off" href="#" target="_blank" rel="noopener" aria-label="Abrir en Google Maps"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.5"/></svg></a></div></div>
       <div class="f c4"><label for="numero">Número</label><textarea class="auto" rows="1" id="numero" data-k="numero" autocomplete="off"></textarea></div>
       <div class="f c3"><label for="cp">Código postal</label><textarea class="auto" rows="1" id="cp" data-k="cp" inputmode="numeric" autocomplete="off"></textarea></div>
@@ -463,6 +470,12 @@
         <span class="lbl">Hoja de seguimiento <span class="unit">(5,50 €)</span></span>
         <label class="switch"><input type="checkbox" id="hoja"><i></i></label>
       </div>
+      <div class="row rowSup">
+        <span class="lbl">GESTIÓN NP</span>
+        <div class="seg" id="seg">
+          <button type="button" data-v="0" class="on">0 €</button><button type="button" data-v="20">20 €</button><button type="button" data-v="40">40 €</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -473,6 +486,7 @@
       <div class="trow" id="rowCajas" style="display:none"><span>Cajas / cubas <span class="unit">(cambio + eliminación; la retirada no se suma)</span></span><span id="tCajas">0,00 €</span></div>
       <div class="trow"><span>Alquiler <span class="unit" id="hintAlq"></span></span><span id="tAlq">0,00 €</span></div>
       <div class="trow"><span>Hoja de seguimiento</span><span id="tHoja">0,00 €</span></div>
+      <div class="trow"><span>Gestión NP</span><span id="tSup">0,00 €</span></div>
       <div class="trow total"><span>Total</span><span id="tTotal">0,00 €</span></div>
     </div>
   </section>
@@ -686,8 +700,8 @@ function nuevaLinea(){ return {uds:0, cont:"1100", residuo:"BANAL", frec:"MENSUA
 const esPolietileno = id => ["1100","120","240","360","800"].includes(id);
 function nuevaOferta(){
   return {id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), creada:new Date().toISOString(), modificada:new Date().toISOString(),
-    empresa:"",nif:"",codemp:"",empresaTipo:null,enviada:false,calle:"",numero:"",cp:"",poblacion:"",provincia:"",telefono:"",email:"",contacto:"",
-    lineas:[nuevaLinea()], alquiler:"", hoja:false, obs:"", entradas:[], estado:null};
+    empresa:"",nif:"",codemp:"",cnae:"",empresaTipo:null,enviada:false,calle:"",numero:"",cp:"",poblacion:"",provincia:"",telefono:"",email:"",contacto:"",
+    lineas:[nuevaLinea()], alquiler:"", hoja:false, suplemento:0, obs:"", entradas:[], estado:null};
 }
 function load(){
   try{ // migración: datos anteriores a los usuarios pasan a JOSE
@@ -752,13 +766,14 @@ function calcular(o){
   const uds = o.lineas.reduce((a,l)=>a+(parseInt(l.uds)||0),0);
   const alq = uds*num(o.alquiler);
   const hoja = o.hoja?HOJA_PRECIO:0;
-  return {serv, cajas, uds, alq, hoja, total:serv+cajas+alq+hoja};
+  const sup = parseInt(o.suplemento)||0;
+  return {serv, cajas, uds, alq, hoja, sup, total:serv+cajas+alq+hoja+sup};
 }
 
 /* =========================================================
    RENDER
    ========================================================= */
-function migrar(o){ if(!Array.isArray(o.entradas)) o.entradas=[]; if(o.obs && o.obs.trim()){ o.entradas.push({id:Date.now().toString(36), fecha:o.modificada||o.creada||new Date().toISOString(), texto:o.obs.trim()}); o.obs=""; } if(o.estado===undefined) o.estado=null; if(o.codemp===undefined) o.codemp=""; if(o.empresaTipo===undefined) o.empresaTipo=null; if(o.enviada===undefined) o.enviada=false; return o; }
+function migrar(o){ if(!Array.isArray(o.entradas)) o.entradas=[]; if(o.obs && o.obs.trim()){ o.entradas.push({id:Date.now().toString(36), fecha:o.modificada||o.creada||new Date().toISOString(), texto:o.obs.trim()}); o.obs=""; } if(o.estado===undefined) o.estado=null; if(o.codemp===undefined) o.codemp=""; if(o.cnae===undefined) o.cnae=""; if(o.suplemento===undefined) o.suplemento=0; if(o.empresaTipo===undefined) o.empresaTipo=null; if(o.enviada===undefined) o.enviada=false; return o; }
 function render(){
   const o = migrar(ofertas[idx]);
   $("#counter").textContent = `${idx+1} / ${ofertas.length}`;
@@ -769,6 +784,7 @@ function render(){
   actualizarLlamar(); actualizarMail(); actualizarMapa();
   $("#alquiler").value = o.alquiler || "0,00";
   $("#hoja").checked = !!o.hoja;
+  renderSeg();
   renderLineas();
   renderTotales();
   renderEntradas();
@@ -805,7 +821,7 @@ function renderLineas(){
 
 function renderTotales(){
   const o=ofertas[idx]; const t=calcular(o);
-  $("#tServ").textContent=eur(t.serv); $("#tCajas").textContent=eur(t.cajas); $("#rowCajas").style.display = o.lineas.some(l=>!esPolietileno(l.cont))?"":"none"; $("#tAlq").textContent=eur(t.alq); $("#tHoja").textContent=eur(t.hoja); $("#tTotal").textContent=eur(t.total);
+  $("#tServ").textContent=eur(t.serv); $("#tCajas").textContent=eur(t.cajas); $("#rowCajas").style.display = o.lineas.some(l=>!esPolietileno(l.cont))?"":"none"; $("#tAlq").textContent=eur(t.alq); $("#tHoja").textContent=eur(t.hoja); $("#tSup").textContent=eur(t.sup); $("#tTotal").textContent=eur(t.total);
   $("#hintAlq").textContent = t.uds? `(${t.uds} cont. × ${eur(num(o.alquiler))})` : "";
   const sem = o.lineas.some(l=>l.frec==="SEMANAL");
   $("#hintServ").textContent = sem ? `(semanal = ${SEMANAS_MES.toLocaleString("es-ES")} semanas/mes)` : "";
@@ -846,6 +862,8 @@ document.querySelectorAll("[data-k]").forEach(el=>{
 });
 $("#alquiler").addEventListener("input",e=>{ ofertas[idx].alquiler=e.target.value; touch(); renderTotales(); save(); });
 $("#alquiler").addEventListener("blur",e=>{ const v=num(e.target.value); e.target.value = v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}); ofertas[idx].alquiler=e.target.value; save(); });
+function renderSeg(){ const v=String(parseInt(ofertas[idx].suplemento)||0); document.querySelectorAll("#seg button").forEach(b=>b.classList.toggle("on",b.dataset.v===v)); }
+$("#seg").addEventListener("click",e=>{ const b=e.target.closest("[data-v]"); if(!b) return; ofertas[idx].suplemento=parseInt(b.dataset.v); touch(); renderSeg(); renderTotales(); save(); });
 $("#hoja").addEventListener("change",e=>{ ofertas[idx].hoja=e.target.checked; touch(); renderTotales(); save(); });
 
 /* Casillas numéricas: al tocar, se vacían si están a 0 o se selecciona todo */
@@ -930,7 +948,7 @@ $("#fDesde").addEventListener("change",()=>renderResults($("#q").value)); $("#fH
 $("#fLimpiar").addEventListener("click",()=>{ $("#fDesde").value=""; $("#fHasta").value=""; fEst=""; fTipo=""; document.querySelectorAll("#fTipo button").forEach(x=>x.classList.toggle("on",x.dataset.t==="")); document.querySelectorAll("#fEstado button").forEach(x=>x.classList.toggle("on",x.dataset.e==="")); $("#q").value=""; renderResults(""); });
 function renderResults(qraw){
   const q=norm(qraw.trim()); const ul=$("#results"); const d1=$("#fDesde").value, d2=$("#fHasta").value;
-  let list = ofertas.map((o,i)=>({o,i})).filter(({o})=> enRango(o,d1,d2) && (fTipo==="" || o.empresaTipo===fTipo) && (fEst==="" || (fEst==="pend"? !o.estado : o.estado===fEst)) ).filter(({o})=> !q || norm(o.empresa).includes(q) || norm(o.cp).includes(q) || norm(o.poblacion).includes(q) || norm(o.nif).includes(q) || norm(o.codemp).includes(q) || norm(o.contacto).includes(q) || (o.entradas||[]).some(e=>norm(e.texto).includes(q)));
+  let list = ofertas.map((o,i)=>({o,i})).filter(({o})=> enRango(o,d1,d2) && (fTipo==="" || o.empresaTipo===fTipo) && (fEst==="" || (fEst==="pend"? !o.estado : o.estado===fEst)) ).filter(({o})=> !q || norm(o.empresa).includes(q) || norm(o.cp).includes(q) || norm(o.poblacion).includes(q) || norm(o.nif).includes(q) || norm(o.codemp).includes(q) || norm(o.cnae).includes(q) || norm(o.contacto).includes(q) || (o.entradas||[]).some(e=>norm(e.texto).includes(q)));
   list.sort((a,b)=> new Date(b.o.modificada)-new Date(a.o.modificada));
   if(!list.length){ ul.innerHTML=`<li class="empty" style="display:block;border:none">Sin resultados${q?` para «${esc(qraw)}»`:""}${fTipo?" en "+(fTipo==="RVERD"?"R. VERD":"DICIMO"):""}${(d1||d2)?" en esas fechas":""}${fEst?" con ese estado":""}</li>`; return; }
   // en búsqueda por fechas, mostrar la fecha que coincide
