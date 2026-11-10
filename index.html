@@ -209,6 +209,17 @@
   .tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:8px;white-space:nowrap}
   .tag.no{background:#fbe9e5;color:var(--danger)}
   .tag.si{background:var(--accent-soft);color:var(--accent)}
+  #dupAviso{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff6e0;border:1px solid #e8d9a8;border-radius:12px;padding:10px 12px;font-size:14px}
+  #dupAviso b{color:#8a6a1a}
+  #dupAviso button{height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:500}
+  .res{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  .res .k{border:1px solid var(--line);border-radius:14px;padding:12px}
+  .res .k .n{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+  .res .k .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+  .res .k.ac .n{color:var(--accent)} .res .k.da .n{color:var(--danger)} .res .k.wa .n{color:#b8860b}
+  .resfila{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .resfila span:last-child{font-variant-numeric:tabular-nums;font-weight:500}
+  .resh{font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:16px 0 4px}
   .bar .tag{display:none}
   .bar .tag.on{display:inline-flex}
   @media(max-width:640px){.bar .tag{font-size:0;padding:4px 6px}.bar .tag::before{font-size:12px;content:attr(data-s)}}
@@ -290,7 +301,7 @@
   .banner button{height:38px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:#fbfbfa;font-weight:500}
   .banner button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
   /* ---------- Modales ---------- */
-  .modal{position:fixed;inset:0;z-index:50;background:rgba(27,31,29,.35);display:none;align-items:flex-start;justify-content:center;padding:calc(env(safe-area-inset-top) + 24px) 16px 16px}
+  .modal{position:fixed;inset:0;z-index:90;background:rgba(27,31,29,.35);display:none;align-items:flex-start;justify-content:center;padding:calc(env(safe-area-inset-top) + 24px) 16px 16px}
   .modal.open{display:flex}
   .sheet{background:var(--card);border-radius:18px;width:100%;max-width:720px;max-height:calc(100vh - 60px);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);overflow:hidden}
   .sheet .top{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
@@ -329,7 +340,7 @@
   .confirm{display:flex;gap:10px;justify-content:flex-end;padding:0 16px 16px}
   .confirm button{height:44px;padding:0 18px;border-radius:12px;border:1px solid var(--line);background:#fbfbfa}
   .confirm button.go{background:var(--danger);border-color:var(--danger);color:#fff}
-  .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:60;pointer-events:none}
+  .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:95;pointer-events:none}
   .toast.show{opacity:1;transform:translateX(-50%)}
   /* ---------- Acceso ---------- */
   #login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:24px;overflow:auto;
@@ -414,7 +425,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v4.4</div>
+    <div class="lfoot">v4.6</div>
   </div>
 </div>
 <header>
@@ -448,6 +459,7 @@
       <div class="f c4"><label for="nif">NIF</label><textarea class="auto" rows="1" id="nif" data-k="nif" autocapitalize="characters" autocomplete="off"></textarea></div>
       <div class="f c3"><label for="codemp">Cód. empresa</label><textarea class="auto" rows="1" id="codemp" data-k="codemp" autocapitalize="characters" autocomplete="off"></textarea></div>
       <div class="f c3"><label for="cnae">CNAE</label><textarea class="auto" rows="1" id="cnae" data-k="cnae" autocapitalize="characters" autocomplete="off"></textarea></div>
+      <div class="c12" id="dupAviso" style="display:none"></div>
       <div class="f c6"><label for="gestor">Gestor actual</label><textarea class="auto" rows="1" id="gestor" data-k="gestor" autocapitalize="characters" autocomplete="off"></textarea></div>
       <div class="f c8"><label for="calle">Calle</label><div class="tel"><textarea class="auto" rows="1" id="calle" data-k="calle" autocomplete="off"></textarea><a id="mapa" class="off" href="#" target="_blank" rel="noopener" aria-label="Abrir en Google Maps"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.5"/></svg></a></div></div>
       <div class="f c4"><label for="numero">Número</label><textarea class="auto" rows="1" id="numero" data-k="numero" autocomplete="off"></textarea></div>
@@ -548,6 +560,14 @@
   </div>
 </div>
 
+<!-- Resumen -->
+<div class="modal" id="mResumen">
+  <div class="sheet" style="max-width:560px">
+    <div class="top"><h3>Resumen</h3><button class="ibtn" data-close><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="body"><div id="resumen"></div></div>
+  </div>
+</div>
+
 <div class="banner" id="banner">
   <div class="t"><b id="bTxt"></b><span id="bSub"></span></div>
   <button id="bVer">Ver</button><button class="primary" id="bOk">Hecho</button>
@@ -640,6 +660,7 @@
   <div class="sheet" style="max-width:420px">
     <div class="top"><h3>Opciones</h3><button class="ibtn" data-close><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="body menu">
+      <button id="btnResumen">📈&nbsp; Resumen</button>
       <button id="btnTodas">☰&nbsp; Ver todas las ofertas</button>
       <button id="btnDup">⧉&nbsp; Duplicar esta oferta</button>
       <button id="btnLogout">⇄&nbsp; Cambiar de usuario</button>
@@ -815,6 +836,7 @@ function render(){
   renderEntradas();
   renderEstado();
   renderEmpresaTipo();
+  comprobarDuplicado();
   renderFotos();
   const fCorta = s => s? new Date(s+"T00:00").toLocaleDateString("es-ES",{day:"2-digit",month:"2-digit",year:"numeric"}) : "";
   const f = d => new Date(d).toLocaleString("es-ES",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
@@ -884,7 +906,8 @@ function actualizarLlamar(){ const t=(ofertas[idx].telefono||"").replace(/[^\d+]
 $("#llamar").addEventListener("click",e=>{ if($("#llamar").classList.contains("off")) e.preventDefault(); });
 document.querySelectorAll("textarea.auto").forEach(el=>{ el.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); el.blur(); } }); el.addEventListener("input",()=>ajustar(el)); });
 document.querySelectorAll("[data-k]").forEach(el=>{
-  el.addEventListener("input",()=>{ ofertas[idx][el.dataset.k]=el.value.replace(/\n/g," "); if(el.dataset.k==="telefono") actualizarLlamar(); if(el.dataset.k==="email"||el.dataset.k==="empresa") actualizarMail(); if(["calle","numero","cp","poblacion","provincia"].includes(el.dataset.k)) actualizarMapa(); touch(); if(el.dataset.k==="empresa") $("#title").textContent=el.value.trim()||"Nueva oferta"; save(); });
+  el.addEventListener("input",()=>{ ofertas[idx][el.dataset.k]=el.value.replace(/\n/g," "); if(el.dataset.k==="nif"||el.dataset.k==="empresa") comprobarDuplicado();
+    if(el.dataset.k==="telefono") actualizarLlamar(); if(el.dataset.k==="email"||el.dataset.k==="empresa") actualizarMail(); if(["calle","numero","cp","poblacion","provincia"].includes(el.dataset.k)) actualizarMapa(); touch(); if(el.dataset.k==="empresa") $("#title").textContent=el.value.trim()||"Nueva oferta"; save(); });
 });
 $("#alquiler").addEventListener("input",e=>{ ofertas[idx].alquiler=e.target.value; touch(); renderTotales(); save(); });
 $("#alquiler").addEventListener("blur",e=>{ const v=num(e.target.value); e.target.value = v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}); ofertas[idx].alquiler=e.target.value; save(); });
@@ -1016,6 +1039,44 @@ $("#btnTodas").addEventListener("click",()=>{ close("#mMenu"); letraTodas=""; re
 $("#ordenChips").addEventListener("click",e=>{ const b=e.target.closest("[data-o]"); if(!b) return; ordenTodas=b.dataset.o; document.querySelectorAll("#ordenChips button").forEach(x=>x.classList.toggle("on",x===b)); renderTodas(); });
 $("#letras").addEventListener("click",e=>{ const b=e.target.closest("[data-l]"); if(!b||b.disabled) return; letraTodas=b.dataset.l; renderTodas(); });
 $("#todasList").addEventListener("click",e=>{ const li=e.target.closest("li[data-i]"); if(!li) return; close("#mTodas"); go(+li.dataset.i, +li.dataset.i>idx?1:-1); });
+
+/* =========================================================
+   RESUMEN
+   ========================================================= */
+function abrirResumen(){
+  close("#mMenu");
+  const hoy=hoyISO(); const mes=hoy.slice(0,7);
+  const reales=ofertas.filter(o=>(o.empresa||"").trim());
+  const delMes=reales.filter(o=>(o.fecha||"").slice(0,7)===mes);
+  const sinEnviar=reales.filter(o=>!o.enviada && o.estado!=="no");
+  const inter=reales.filter(o=>o.estado==="si"), no=reales.filter(o=>o.estado==="no"), sinDec=reales.filter(o=>!o.estado);
+  const sum=l=>l.reduce((a,o)=>a+calcular(o).total,0);
+  const porEmpresa=t=>reales.filter(o=>o.empresaTipo===t).length;
+  const avisosPend=avisos.filter(a=>!a.hecho).length, avisosVenc=avisos.filter(vencido).length;
+  const k=(n,l,c)=>`<div class="k ${c||""}"><div class="n">${n}</div><div class="l">${l}</div></div>`;
+  $("#resumen").innerHTML=`
+    <div class="res">
+      ${k(reales.length,"Ofertas en total")}
+      ${k(delMes.length,"Este mes")}
+      ${k(sinEnviar.length,"Sin enviar","wa")}
+      ${k(inter.length,"Interesados","ac")}
+    </div>
+    <div class="resh">Dinero en juego (€/mes)</div>
+    <div class="resfila"><span>Ofertas de clientes interesados</span><span>${eur(sum(inter))}</span></div>
+    <div class="resfila"><span>Pendientes de enviar</span><span>${eur(sum(sinEnviar))}</span></div>
+    <div class="resfila"><span>Sin decidir</span><span>${eur(sum(sinDec))}</span></div>
+    <div class="resfila"><span>Total de la libreta</span><span>${eur(sum(reales))}</span></div>
+    <div class="resh">Situación</div>
+    <div class="resfila"><span>Enviadas al cliente</span><span>${reales.filter(o=>o.enviada).length}</span></div>
+    <div class="resfila"><span>No interesados</span><span>${no.length}</span></div>
+    <div class="resfila"><span>Sin decidir</span><span>${sinDec.length}</span></div>
+    <div class="resfila"><span>DICIMO · R. VERD · sin asignar</span><span>${porEmpresa("DICIMO")} · ${porEmpresa("RVERD")} · ${reales.filter(o=>!o.empresaTipo).length}</span></div>
+    <div class="resh">Avisos</div>
+    <div class="resfila"><span>Pendientes</span><span>${avisosPend}</span></div>
+    <div class="resfila"><span>Ya vencidos</span><span>${avisosVenc}</span></div>`;
+  open("#mResumen");
+}
+$("#btnResumen").addEventListener("click",abrirResumen);
 
 /* =========================================================
    EXPORTAR A EXCEL (sin librerías externas: funciona sin internet)
@@ -1182,11 +1243,37 @@ $("#confirmGo").addEventListener("click",async()=>{
   ofertas.splice(idx,1); if(!ofertas.length) ofertas.push(nuevaOferta()); idx=Math.min(idx,ofertas.length-1); close("#mConfirm"); render(); save(true); toast("Oferta eliminada"); });
 
 /* =========================================================
+   AVISO DE CLIENTE DUPLICADO
+   ========================================================= */
+function comprobarDuplicado(){
+  const o=ofertas[idx]; const box=$("#dupAviso");
+  const nif=norm((o.nif||"").replace(/[\s.-]/g,"")), emp=norm((o.empresa||"").trim());
+  let hit=-1, motivo="";
+  if(nif.length>=6){ hit=ofertas.findIndex((x,i)=>i!==idx && norm((x.nif||"").replace(/[\s.-]/g,""))===nif); if(hit>=0) motivo="el mismo NIF"; }
+  if(hit<0 && emp.length>=4){ hit=ofertas.findIndex((x,i)=>i!==idx && norm((x.empresa||"").trim())===emp); if(hit>=0) motivo="el mismo nombre"; }
+  if(hit<0){ box.style.display="none"; box.innerHTML=""; return; }
+  const otra=ofertas[hit];
+  box.style.display="flex";
+  box.innerHTML=`<div style="flex:1;min-width:160px">⚠️ Ya tienes una oferta con <b>${esc(motivo)}</b>: ${esc(otra.empresa||"(sin nombre)")}${otra.fecha?` · ${new Date(otra.fecha+"T00:00").toLocaleDateString("es-ES")}`:""}</div><button type="button" data-i="${hit}">Ver esa oferta</button>`;
+}
+$("#dupAviso").addEventListener("click",e=>{ const b=e.target.closest("[data-i]"); if(!b) return; const i=+b.dataset.i; go(i, i>idx?1:-1); });
+
+/* =========================================================
    EMPRESA: DICIMO / R. VERD
    ========================================================= */
 function renderFondo(){ const o=ofertas[idx]; document.body.classList.toggle("est-no",o.estado==="no"); document.body.classList.toggle("est-enviada",o.estado!=="no"&&!!o.enviada); }
 function renderEmpresaTipo(){ const o=ofertas[idx]; renderFondo(); $("#empDicimo").classList.toggle("on",o.empresaTipo==="DICIMO"); $("#empRverd").classList.toggle("on",o.empresaTipo==="RVERD"); $("#btnEnviada").classList.toggle("on",!!o.enviada); }
-$("#btnEnviada").addEventListener("click",()=>{ const o=ofertas[idx]; o.enviada=!o.enviada; touch(); renderEmpresaTipo(); save(); toast(o.enviada?"Marcada como enviada al cliente":"Desmarcada: oferta no enviada"); });
+$("#btnEnviada").addEventListener("click",()=>{ const o=ofertas[idx]; o.enviada=!o.enviada; touch(); renderEmpresaTipo(); save();
+  if(!o.enviada){ toast("Desmarcada: oferta no enviada"); return; }
+  const yaHay = avisos.some(a=>!a.hecho && a.ofertaId===o.id);
+  if(yaHay){ toast("Marcada como enviada al cliente"); return; }
+  const d=new Date(); d.setDate(d.getDate()+7);
+  const f=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  const nombre=(o.empresa||"").trim();
+  avisos.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), texto:`Llamar a ${nombre||"el cliente"} (oferta enviada el ${new Date().toLocaleDateString("es-ES")})`,
+    fecha:f, hora:"", ofertaId:o.id, creado:new Date().toISOString(), hecho:false, avisado:false, auto:true});
+  saveAvisos(); toast("Enviada · aviso de seguimiento creado para dentro de 7 días");
+});
 function setEmpresaTipo(v){ const o=ofertas[idx]; o.empresaTipo = o.empresaTipo===v? null : v; touch(); renderEmpresaTipo(); save(); }
 $("#empDicimo").addEventListener("click",()=>setEmpresaTipo("DICIMO"));
 $("#empRverd").addEventListener("click",()=>setEmpresaTipo("RVERD"));
