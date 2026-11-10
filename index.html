@@ -414,7 +414,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v4.3</div>
+    <div class="lfoot">v4.4</div>
   </div>
 </div>
 <header>
@@ -1098,8 +1098,14 @@ const COD_CONT={"1100":"1100","120":"120L","240":"240L","360":"360L","800":"800L
 const COD_RES={BANAL:"B",CARTON:"C",PLASTICO:"P",VIDRIO:"V",ORGANICO:"O",MADERA:"M",METAL:"MT"};
 const servTxt = l => { if(!esPolietileno(l.cont)) return ""; if(l.frec==="MENSUAL") return " Mensual"; if(l.frec==="QUINCENAL") return " Quincenal";
   const n=parseInt(l.nsem)||1; return n<=1? " Semanal" : ` ${n} x Semana`; };
-const descripcionOferta = o => (o.lineas||[]).filter(l=>(parseInt(l.uds)||0)>0)
-  .map(l=>`${parseInt(l.uds)||0} - ${COD_CONT[l.cont]||l.cont}${COD_RES[l.residuo]||(l.residuo||"").slice(0,1)}${servTxt(l)}`).join("; ");
+const lineaVacia = l => (parseInt(l.uds)||0)===0 && num(l.precio)===0 && num(l.cambio)===0 && num(l.retirada)===0 && num(l.eliminacion)===0;
+function descripcionOferta(o){
+  const todas=(o.lineas||[]);
+  const txt=l=>`${parseInt(l.uds)||0} - ${COD_CONT[l.cont]||l.cont}${COD_RES[l.residuo]||(l.residuo||"").slice(0,1)}${servTxt(l)}`;
+  let list=todas.filter(l=>!lineaVacia(l));
+  if(!list.length) list=todas;            // si todas estuvieran en blanco, las muestra igualmente
+  return list.map(txt).join("; ");
+}
 async function exportarExcel(modo){
   const CAB_O=["Fecha","Empresa comercializadora","Nombre de la empresa","NIF","Cód. empresa","CNAE","Gestor actual","Calle","Número","Código postal","Población","Provincia","Teléfono","Email","Persona de contacto",
     "Estado","Enviada","Nº de líneas","Total contenedores","Descripción de la oferta","Total servicios (€)","Total cajas/cubas (€)","Alquiler unitario (€)","Total alquiler (€)","Hoja de seguimiento (€)","Gestión NP (€)","TOTAL (€)","Nº de fotos","Observaciones","Creada","Última modificación"];
