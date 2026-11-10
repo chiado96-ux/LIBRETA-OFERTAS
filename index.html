@@ -414,7 +414,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v4.2</div>
+    <div class="lfoot">v4.3</div>
   </div>
 </div>
 <header>
@@ -563,6 +563,18 @@
       <a class="mbtn" id="mMailApp" href="#">📧&nbsp; App de correo por defecto</a>
       <button id="mOtra" type="button">⋯&nbsp; Otra app… (compartir)</button>
       <button id="mCopiar" type="button">⎘&nbsp; Copiar dirección</button>
+    </div>
+  </div>
+</div>
+
+<!-- Exportar a Excel -->
+<div class="modal" id="mExcel">
+  <div class="sheet" style="max-width:420px">
+    <div class="top"><h3>Exportar a Excel</h3><button class="ibtn" data-close><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="body menu">
+      <button id="xlDesc">⇩&nbsp; Descargar</button>
+      <button id="xlEnviar">📤&nbsp; Descargar y enviar</button>
+      <div class="hint" id="xlInfo" style="margin-top:4px"></div>
     </div>
   </div>
 </div>
@@ -1072,7 +1084,14 @@ function descargar(nombre, bytes, mime){
   const blob=new Blob([bytes],{type:mime});
   const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=nombre;
   document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); },2000);
-  if(navigator.canShare){ try{ const f=new File([blob],nombre,{type:mime}); if(navigator.canShare({files:[f]})) setTimeout(()=>{ navigator.share({files:[f],title:nombre}).catch(()=>{}); },400); }catch(e){} }
+  return blob;
+}
+async function compartirArchivo(nombre, blob, mime){
+  try{ const f=new File([blob],nombre,{type:mime});
+    if(navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f], title:nombre}); return true; }
+  }catch(e){ if(e && e.name==="AbortError") return true; }
+  toast("Este dispositivo no permite enviar el archivo directamente; está en Descargas");
+  return false;
 }
 const FREC_TXT={MENSUAL:"Mensual",QUINCENAL:"Quincenal",SEMANAL:"Semanal"};
 const COD_CONT={"1100":"1100","120":"120L","240":"240L","360":"360L","800":"800L",JUMBO_M:"JUMBO M",JUMBO_L:"JUMBO L",JUMBO_XL:"JUMBO XL",PEQ_ABIERTO:"PEQ.ABIERTO",EST_ALZAS:"EST.ALZAS",HISPALEV:"PATERA",CAJAS:"CAJAS",AUTOCOMPACT:"AUTOCOMP.",CUBI:"CUBICONT.",BIDONES:"BIDONES",BIGBAG:"BIGBAG",CAJA_CARTON:"CAJA CARTON",BIDON_PILAS:"BIDON PILAS",BATERIAS:"CONT.BATERIAS"};
@@ -1081,7 +1100,7 @@ const servTxt = l => { if(!esPolietileno(l.cont)) return ""; if(l.frec==="MENSUA
   const n=parseInt(l.nsem)||1; return n<=1? " Semanal" : ` ${n} x Semana`; };
 const descripcionOferta = o => (o.lineas||[]).filter(l=>(parseInt(l.uds)||0)>0)
   .map(l=>`${parseInt(l.uds)||0} - ${COD_CONT[l.cont]||l.cont}${COD_RES[l.residuo]||(l.residuo||"").slice(0,1)}${servTxt(l)}`).join("; ");
-function exportarExcel(){
+async function exportarExcel(modo){
   const CAB_O=["Fecha","Empresa comercializadora","Nombre de la empresa","NIF","Cód. empresa","CNAE","Gestor actual","Calle","Número","Código postal","Población","Provincia","Teléfono","Email","Persona de contacto",
     "Estado","Enviada","Nº de líneas","Total contenedores","Descripción de la oferta","Total servicios (€)","Total cajas/cubas (€)","Alquiler unitario (€)","Total alquiler (€)","Hoja de seguimiento (€)","Gestión NP (€)","TOTAL (€)","Nº de fotos","Observaciones","Creada","Última modificación"];
   const CAB_L=["Fecha","Nombre de la empresa","NIF","Cód. empresa","Gestor actual","Código postal","Población","Unidades","Contenedor","Residuo","Servicio","Vaciadas/semana","Precio vaciada (€)","Cambio (€)","Retirada definitiva (€)","Eliminación residuo (€)","Subtotal mes (€)"];
@@ -1105,15 +1124,23 @@ function exportarExcel(){
     });
   });
   const bytes=buildXLSX([{name:"Ofertas",rows:filasO},{name:"Líneas",rows:filasL}]);
-  descargar(`libreta-ofertas-${usuario}-${hoyISO()}.xlsx`, bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  const mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  const nombre=`libreta-ofertas-${usuario}-${hoyISO()}.xlsx`;
+  const blob=descargar(nombre, bytes, mime);
   toast(`${ofertas.length} ofertas exportadas a Excel`);
+  if(modo==="enviar") setTimeout(()=>compartirArchivo(nombre, blob, mime), 500);
 }
 let fotosPorOferta={};
-$("#btnExcel").addEventListener("click",async()=>{
-  close("#mMenu"); fotosPorOferta={};
+$("#btnExcel").addEventListener("click",()=>{ close("#mMenu");
+  $("#xlInfo").textContent=`${ofertas.length} ${ofertas.length===1?"oferta":"ofertas"} de ${usuario}. «Descargar y enviar» abre el menú para mandarlo por Outlook, Gmail o WhatsApp con el archivo adjunto.`;
+  open("#mExcel"); });
+async function lanzarExcel(modo){
+  close("#mExcel"); fotosPorOferta={};
   try{ const fs=await FDB.porUsuario(); fs.forEach(f=>{ fotosPorOferta[f.ofertaId]=(fotosPorOferta[f.ofertaId]||0)+1; }); }catch(e){}
-  try{ exportarExcel(); }catch(e){ toast("No se pudo generar el Excel"); console.error(e); }
-});
+  try{ await exportarExcel(modo); }catch(e){ toast("No se pudo generar el Excel"); console.error(e); }
+}
+$("#xlDesc").addEventListener("click",()=>lanzarExcel("descargar"));
+$("#xlEnviar").addEventListener("click",()=>lanzarExcel("enviar"));
 
 /* =========================================================
    MENÚ: duplicar, exportar, importar, eliminar
