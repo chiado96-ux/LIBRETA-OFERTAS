@@ -209,6 +209,12 @@
   .tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:8px;white-space:nowrap}
   .tag.no{background:#fbe9e5;color:var(--danger)}
   .tag.si{background:var(--accent-soft);color:var(--accent)}
+  .subt{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--accent);border-top:1px solid var(--line);padding-top:12px;margin-top:2px}
+  .subt .chk{display:inline-flex;align-items:center;gap:8px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);font-size:13px;cursor:pointer}
+  .subt .chk input{width:22px;height:22px;accent-color:var(--accent);margin:0}
+  .grid.sinfiscal .dirF{display:none}
+  .subt .mini{height:32px;padding:0 10px;border-radius:9px;border:1px solid var(--line);background:#fbfbfa;font-size:12px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted)}
+  .subt .mini:active{background:var(--accent-soft)}
   #dupAviso{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff6e0;border:1px solid #e8d9a8;border-radius:12px;padding:10px 12px;font-size:14px}
   #dupAviso b{color:#8a6a1a}
   #dupAviso button{height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:500}
@@ -425,7 +431,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v4.6</div>
+    <div class="lfoot">v4.7</div>
   </div>
 </div>
 <header>
@@ -459,13 +465,23 @@
       <div class="f c4"><label for="nif">NIF</label><textarea class="auto" rows="1" id="nif" data-k="nif" autocapitalize="characters" autocomplete="off"></textarea></div>
       <div class="f c3"><label for="codemp">Cód. empresa</label><textarea class="auto" rows="1" id="codemp" data-k="codemp" autocapitalize="characters" autocomplete="off"></textarea></div>
       <div class="f c3"><label for="cnae">CNAE</label><textarea class="auto" rows="1" id="cnae" data-k="cnae" autocapitalize="characters" autocomplete="off"></textarea></div>
+      <div class="f c3"><label for="cprod">C. productor</label><textarea class="auto" rows="1" id="cprod" data-k="cprod" autocapitalize="characters" autocomplete="off"></textarea></div>
       <div class="c12" id="dupAviso" style="display:none"></div>
-      <div class="f c6"><label for="gestor">Gestor actual</label><textarea class="auto" rows="1" id="gestor" data-k="gestor" autocapitalize="characters" autocomplete="off"></textarea></div>
-      <div class="f c8"><label for="calle">Calle</label><div class="tel"><textarea class="auto" rows="1" id="calle" data-k="calle" autocomplete="off"></textarea><a id="mapa" class="off" href="#" target="_blank" rel="noopener" aria-label="Abrir en Google Maps"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.5"/></svg></a></div></div>
+      <div class="f c3"><label for="gestor">Gestor actual</label><textarea class="auto" rows="1" id="gestor" data-k="gestor" autocapitalize="characters" autocomplete="off"></textarea></div>
+      <div class="c12 subt">Centro productor</div>
+      <div class="f c8"><label for="calle">Calle</label><div class="tel"><textarea class="auto" rows="1" id="calle" data-k="calle" autocomplete="off"></textarea><a id="mapa" class="off" href="#" target="_blank" rel="noopener" aria-label="Abrir el centro productor en Google Maps"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.5"/></svg></a></div></div>
       <div class="f c4"><label for="numero">Número</label><textarea class="auto" rows="1" id="numero" data-k="numero" autocomplete="off"></textarea></div>
       <div class="f c3"><label for="cp">Código postal</label><textarea class="auto" rows="1" id="cp" data-k="cp" inputmode="numeric" autocomplete="off"></textarea></div>
       <div class="f c6"><label for="poblacion">Población</label><textarea class="auto" rows="1" id="poblacion" data-k="poblacion" autocomplete="off"></textarea></div>
       <div class="f c3"><label for="provincia">Provincia</label><textarea class="auto" rows="1" id="provincia" data-k="provincia" autocomplete="off"></textarea></div>
+
+      <div class="c12 subt">Dirección fiscal <label class="chk"><input type="checkbox" id="mismaDir"><span>Es la misma que el centro productor</span></label></div>
+      <div class="f c8 dirF"><label for="calleF">Calle</label><div class="tel"><textarea class="auto" rows="1" id="calleF" data-k="calleF" autocomplete="off"></textarea><a id="mapaF" class="off" href="#" target="_blank" rel="noopener" aria-label="Abrir la dirección fiscal en Google Maps"><svg viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.5"/></svg></a></div></div>
+      <div class="f c4 dirF"><label for="numeroF">Número</label><textarea class="auto" rows="1" id="numeroF" data-k="numeroF" autocomplete="off"></textarea></div>
+      <div class="f c3 dirF"><label for="cpF">Código postal</label><textarea class="auto" rows="1" id="cpF" data-k="cpF" inputmode="numeric" autocomplete="off"></textarea></div>
+      <div class="f c6 dirF"><label for="poblacionF">Población</label><textarea class="auto" rows="1" id="poblacionF" data-k="poblacionF" autocomplete="off"></textarea></div>
+      <div class="f c3 dirF"><label for="provinciaF">Provincia</label><textarea class="auto" rows="1" id="provinciaF" data-k="provinciaF" autocomplete="off"></textarea></div>
+
       <div class="f c4"><label for="telefono">Teléfono</label><div class="tel"><textarea class="auto" rows="1" id="telefono" data-k="telefono" inputmode="tel" autocomplete="off"></textarea><a id="llamar" class="off" href="#" aria-label="Llamar"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></a></div></div>
       <div class="f c4"><label for="email">Email</label><div class="tel"><textarea class="auto" rows="1" id="email" data-k="email" inputmode="email" autocapitalize="none" autocomplete="off"></textarea><a id="mailto" class="off" href="#" aria-label="Escribir email"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></a></div></div>
       <div class="f c4"><label for="contacto">Persona de contacto</label><textarea class="auto" rows="1" id="contacto" data-k="contacto" autocomplete="off"></textarea></div>
@@ -746,7 +762,7 @@ function nuevaLinea(){ return {uds:0, cont:"1100", residuo:"BANAL", frec:"MENSUA
 const esPolietileno = id => ["1100","120","240","360","800"].includes(id);
 function nuevaOferta(){
   return {id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), creada:new Date().toISOString(), modificada:new Date().toISOString(),
-    fecha:hoyISO(),empresa:"",nif:"",codemp:"",cnae:"",gestor:"",empresaTipo:null,enviada:false,calle:"",numero:"",cp:"",poblacion:"",provincia:"",telefono:"",email:"",contacto:"",
+    fecha:hoyISO(),empresa:"",nif:"",codemp:"",cnae:"",cprod:"",gestor:"",empresaTipo:null,enviada:false,calle:"",numero:"",cp:"",poblacion:"",provincia:"",calleF:"",numeroF:"",cpF:"",poblacionF:"",provinciaF:"",mismaDir:false,telefono:"",email:"",contacto:"",
     lineas:[nuevaLinea()], alquiler:"", hoja:false, suplemento:0, obs:"", entradas:[], estado:null};
 }
 function load(){
@@ -819,7 +835,7 @@ function calcular(o){
 /* =========================================================
    RENDER
    ========================================================= */
-function migrar(o){ if(!Array.isArray(o.entradas)) o.entradas=[]; if(o.obs && o.obs.trim()){ o.entradas.push({id:Date.now().toString(36), fecha:o.modificada||o.creada||new Date().toISOString(), texto:o.obs.trim()}); o.obs=""; } if(o.estado===undefined) o.estado=null; if(o.codemp===undefined) o.codemp=""; if(o.cnae===undefined) o.cnae=""; if(o.gestor===undefined) o.gestor=""; if(!o.fecha) o.fecha=(o.creada||new Date().toISOString()).slice(0,10); if(o.suplemento===undefined) o.suplemento=0; if(o.empresaTipo===undefined) o.empresaTipo=null; if(o.enviada===undefined) o.enviada=false; return o; }
+function migrar(o){ if(!Array.isArray(o.entradas)) o.entradas=[]; if(o.obs && o.obs.trim()){ o.entradas.push({id:Date.now().toString(36), fecha:o.modificada||o.creada||new Date().toISOString(), texto:o.obs.trim()}); o.obs=""; } if(o.estado===undefined) o.estado=null; if(o.codemp===undefined) o.codemp=""; if(o.cnae===undefined) o.cnae=""; if(o.gestor===undefined) o.gestor=""; if(o.cprod===undefined) o.cprod=""; ["calleF","numeroF","cpF","poblacionF","provinciaF"].forEach(k=>{ if(o[k]===undefined) o[k]=""; }); if(o.mismaDir===undefined) o.mismaDir=false; if(!o.fecha) o.fecha=(o.creada||new Date().toISOString()).slice(0,10); if(o.suplemento===undefined) o.suplemento=0; if(o.empresaTipo===undefined) o.empresaTipo=null; if(o.enviada===undefined) o.enviada=false; return o; }
 function render(){
   const o = migrar(ofertas[idx]);
   $("#counter").textContent = `${idx+1} / ${ofertas.length}`;
@@ -827,7 +843,7 @@ function render(){
   $("#btnPrev").disabled = idx===0; $("#btnPrev").style.opacity = idx===0?.35:1;
   $("#btnNext").disabled = idx===ofertas.length-1; $("#btnNext").style.opacity = idx===ofertas.length-1?.35:1;
   document.querySelectorAll("[data-k]").forEach(el=>{ el.value = o[el.dataset.k] || ""; ajustar(el); });
-  actualizarLlamar(); actualizarMail(); actualizarMapa();
+  renderDirFiscal(); actualizarLlamar(); actualizarMail(); actualizarMapa();
   $("#alquiler").value = o.alquiler || "0,00";
   $("#hoja").checked = !!o.hoja;
   renderSeg();
@@ -882,9 +898,27 @@ function renderTotales(){
 function touch(){ ofertas[idx].modificada=new Date().toISOString(); }
 function ajustar(el){ if(!el.classList.contains("auto")) return; el.style.height="44px"; el.style.height=Math.max(44, el.scrollHeight)+"px"; }
 function actualizarMail(){ const m=(ofertas[idx].email||"").trim(); const a=$("#mailto"); if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){ const o=ofertas[idx]; a.href="#"; a.classList.remove("off"); } else { a.href="#"; a.classList.add("off"); } }
-function actualizarMapa(){ const o=ofertas[idx]; const partes=[[o.calle,o.numero].filter(x=>(x||"").trim()).join(" "), [o.cp,o.poblacion].filter(x=>(x||"").trim()).join(" "), o.provincia].map(x=>(x||"").trim()).filter(Boolean);
-  const a=$("#mapa"); if(partes.length && (o.poblacion||o.cp)){ a.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(partes.join(", ")+", España"); a.classList.remove("off"); } else { a.href="#"; a.classList.add("off"); } }
-const esAndroid=/android/i.test(navigator.userAgent);
+function urlMapa(calle,numero,cp,pob,prov){ const partes=[[calle,numero].filter(x=>(x||"").trim()).join(" "), [cp,pob].filter(x=>(x||"").trim()).join(" "), prov].map(x=>(x||"").trim()).filter(Boolean);
+  if(!partes.length || !((pob||"").trim()||(cp||"").trim())) return null;
+  return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(partes.join(", ")+", España"); }
+function actualizarMapa(){ const o=ofertas[idx];
+  const u1=urlMapa(o.calle,o.numero,o.cp,o.poblacion,o.provincia); const a1=$("#mapa");
+  if(u1){ a1.href=u1; a1.classList.remove("off"); } else { a1.href="#"; a1.classList.add("off"); }
+  const u2=urlMapa(o.calleF,o.numeroF,o.cpF,o.poblacionF,o.provinciaF); const a2=$("#mapaF");
+  if(u2){ a2.href=u2; a2.classList.remove("off"); } else { a2.href="#"; a2.classList.add("off"); }
+}
+$("#mapa").addEventListener("click",e=>{ if($("#mapa").classList.contains("off")) e.preventDefault(); });
+$("#mapaF").addEventListener("click",e=>{ if($("#mapaF").classList.contains("off")) e.preventDefault(); });
+const CAMPOS_PROD=["calle","numero","cp","poblacion","provincia"], CAMPOS_FISC=["calleF","numeroF","cpF","poblacionF","provinciaF"];
+function sincronizarFiscal(){ const o=ofertas[idx]; if(!o.mismaDir) return;
+  CAMPOS_PROD.forEach((k,i)=>{ const d=CAMPOS_FISC[i]; o[d]=o[k]||""; const el=document.getElementById(d); if(el){ el.value=o[d]; ajustar(el); } });
+}
+function renderDirFiscal(){ const o=ofertas[idx]; $("#mismaDir").checked=!!o.mismaDir; document.querySelector(".grid").classList.toggle("sinfiscal", !!o.mismaDir); }
+$("#mismaDir").addEventListener("change",e=>{ const o=ofertas[idx]; o.mismaDir=e.target.checked;
+  if(o.mismaDir) sincronizarFiscal();
+  touch(); renderDirFiscal(); actualizarMapa(); save();
+  toast(o.mismaDir? "La dirección fiscal se completa sola con el centro productor" : "Dirección fiscal independiente");
+});
 $("#mailto").addEventListener("click",e=>{ e.preventDefault(); if($("#mailto").classList.contains("off")) return; abrirMenuMail(); });
 function abrirMenuMail(){ const o=ofertas[idx]; const to=(o.email||"").trim(); const subj="Oferta gestión de residuos"+(o.empresa?" · "+o.empresa:""); const body="Hola"+(o.contacto?" "+o.contacto:"")+",\n\n";
   const q="?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body); const mailto="mailto:"+to+q;
@@ -907,7 +941,8 @@ $("#llamar").addEventListener("click",e=>{ if($("#llamar").classList.contains("o
 document.querySelectorAll("textarea.auto").forEach(el=>{ el.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); el.blur(); } }); el.addEventListener("input",()=>ajustar(el)); });
 document.querySelectorAll("[data-k]").forEach(el=>{
   el.addEventListener("input",()=>{ ofertas[idx][el.dataset.k]=el.value.replace(/\n/g," "); if(el.dataset.k==="nif"||el.dataset.k==="empresa") comprobarDuplicado();
-    if(el.dataset.k==="telefono") actualizarLlamar(); if(el.dataset.k==="email"||el.dataset.k==="empresa") actualizarMail(); if(["calle","numero","cp","poblacion","provincia"].includes(el.dataset.k)) actualizarMapa(); touch(); if(el.dataset.k==="empresa") $("#title").textContent=el.value.trim()||"Nueva oferta"; save(); });
+    if(el.dataset.k==="telefono") actualizarLlamar(); if(el.dataset.k==="email"||el.dataset.k==="empresa") actualizarMail(); if(CAMPOS_PROD.includes(el.dataset.k)) sincronizarFiscal();
+    if(CAMPOS_PROD.includes(el.dataset.k)||CAMPOS_FISC.includes(el.dataset.k)) actualizarMapa(); touch(); if(el.dataset.k==="empresa") $("#title").textContent=el.value.trim()||"Nueva oferta"; save(); });
 });
 $("#alquiler").addEventListener("input",e=>{ ofertas[idx].alquiler=e.target.value; touch(); renderTotales(); save(); });
 $("#alquiler").addEventListener("blur",e=>{ const v=num(e.target.value); e.target.value = v.toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2}); ofertas[idx].alquiler=e.target.value; save(); });
@@ -1004,7 +1039,7 @@ function renderResults(qraw){
   const q=norm(qraw.trim()); const ul=$("#results"); const d1=$("#fDesde").value, d2=$("#fHasta").value;
   const okGestor=o=>{ if(!fGestor) return true; const g=norm((o.gestor||"").trim()); return fGestor==="__sin__"? !g : g===fGestor; };
   const okEstado=o=>{ if(fEst==="") return true; if(fEst==="pend") return !o.estado; if(fEst==="sinenviar") return !o.enviada && o.estado!=="no"; return o.estado===fEst; };
-  let list = ofertas.map((o,i)=>({o,i})).filter(({o})=> enRango(o,d1,d2) && (fTipo==="" || o.empresaTipo===fTipo) && okGestor(o) && okEstado(o) ).filter(({o})=> !q || norm(o.empresa).includes(q) || norm(o.cp).includes(q) || norm(o.poblacion).includes(q) || norm(o.nif).includes(q) || norm(o.codemp).includes(q) || norm(o.cnae).includes(q) || norm(o.gestor).includes(q) || norm(o.contacto).includes(q) || (o.entradas||[]).some(e=>norm(e.texto).includes(q)));
+  let list = ofertas.map((o,i)=>({o,i})).filter(({o})=> enRango(o,d1,d2) && (fTipo==="" || o.empresaTipo===fTipo) && okGestor(o) && okEstado(o) ).filter(({o})=> !q || norm(o.empresa).includes(q) || norm(o.cp).includes(q) || norm(o.poblacion).includes(q) || norm(o.nif).includes(q) || norm(o.codemp).includes(q) || norm(o.cnae).includes(q) || norm(o.gestor).includes(q) || norm(o.cprod).includes(q) || norm(o.cpF).includes(q) || norm(o.poblacionF).includes(q) || norm(o.contacto).includes(q) || (o.entradas||[]).some(e=>norm(e.texto).includes(q)));
   list.sort((a,b)=> new Date(b.o.modificada)-new Date(a.o.modificada));
   if(!list.length){ ul.innerHTML=`<li class="empty" style="display:block;border:none">Sin resultados${q?` para «${esc(qraw)}»`:""}${fTipo?" en "+(fTipo==="RVERD"?"R. VERD":"DICIMO"):""}${fGestor?" con ese gestor":""}${(d1||d2)?" en esas fechas":""}${fEst?" con ese estado":""}</li>`; return; }
   // en búsqueda por fechas, mostrar la fecha que coincide
@@ -1168,22 +1203,23 @@ function descripcionOferta(o){
   return list.map(txt).join("; ");
 }
 async function exportarExcel(modo){
-  const CAB_O=["Fecha","Empresa comercializadora","Nombre de la empresa","NIF","Cód. empresa","CNAE","Gestor actual","Calle","Número","Código postal","Población","Provincia","Teléfono","Email","Persona de contacto",
+  const CAB_O=["Fecha","Empresa comercializadora","Nombre de la empresa","NIF","Cód. empresa","CNAE","C. productor","Gestor actual","Calle (centro productor)","Número (centro productor)","C.P. (centro productor)","Población (centro productor)","Provincia (centro productor)","Calle (fiscal)","Número (fiscal)","C.P. (fiscal)","Población (fiscal)","Provincia (fiscal)","Teléfono","Email","Persona de contacto",
     "Estado","Enviada","Nº de líneas","Total contenedores","Descripción de la oferta","Total servicios (€)","Total cajas/cubas (€)","Alquiler unitario (€)","Total alquiler (€)","Hoja de seguimiento (€)","Gestión NP (€)","TOTAL (€)","Nº de fotos","Observaciones","Creada","Última modificación"];
-  const CAB_L=["Fecha","Nombre de la empresa","NIF","Cód. empresa","Gestor actual","Código postal","Población","Unidades","Contenedor","Residuo","Servicio","Vaciadas/semana","Precio vaciada (€)","Cambio (€)","Retirada definitiva (€)","Eliminación residuo (€)","Subtotal mes (€)"];
+  const CAB_L=["Fecha","Nombre de la empresa","NIF","Cód. empresa","C. productor","Gestor actual","C.P. (centro productor)","Población (centro productor)","Unidades","Contenedor","Residuo","Servicio","Vaciadas/semana","Precio vaciada (€)","Cambio (€)","Retirada definitiva (€)","Eliminación residuo (€)","Subtotal mes (€)"];
   const filasO=[CAB_O], filasL=[CAB_L];
   const r2=n=>Math.round((n+Number.EPSILON)*100)/100;
   [...ofertas].sort((a,b)=>(a.fecha||"").localeCompare(b.fecha||"")).forEach(o=>{
     const t=calcular(o);
     const obs=(o.entradas||[]).slice().sort((x,y)=>x.fecha<y.fecha?1:-1).map(e=>`[${new Date(e.fecha).toLocaleDateString("es-ES")}] ${e.texto}`).join(" \n");
-    filasO.push([o.fecha?{d:o.fecha}:"", o.empresaTipo==="RVERD"?"R. VERD":(o.empresaTipo==="DICIMO"?"DICIMO":""), o.empresa||"", o.nif||"", o.codemp||"", o.cnae||"", o.gestor||"",
-      o.calle||"", o.numero||"", o.cp||"", o.poblacion||"", o.provincia||"", o.telefono||"", o.email||"", o.contacto||"",
+    filasO.push([o.fecha?{d:o.fecha}:"", o.empresaTipo==="RVERD"?"R. VERD":(o.empresaTipo==="DICIMO"?"DICIMO":""), o.empresa||"", o.nif||"", o.codemp||"", o.cnae||"", o.cprod||"", o.gestor||"",
+      o.calle||"", o.numero||"", o.cp||"", o.poblacion||"", o.provincia||"",
+      o.calleF||"", o.numeroF||"", o.cpF||"", o.poblacionF||"", o.provinciaF||"", o.telefono||"", o.email||"", o.contacto||"",
       o.estado==="no"?"NO INTERESADO":(o.estado==="si"?"INTERESADO":""), o.enviada?"SÍ":"NO", (o.lineas||[]).length, t.uds, descripcionOferta(o),
       r2(t.serv), r2(t.cajas), num(o.alquiler), r2(t.alq), r2(t.hoja), r2(t.sup), r2(t.total), (fotosPorOferta[o.id]||0), obs,
       o.creada? new Date(o.creada).toLocaleString("es-ES"):"", o.modificada? new Date(o.modificada).toLocaleString("es-ES"):""]);
     (o.lineas||[]).forEach(l=>{
       const poli=esPolietileno(l.cont);
-      filasL.push([o.fecha?{d:o.fecha}:"", o.empresa||"", o.nif||"", o.codemp||"", o.gestor||"", o.cp||"", o.poblacion||"",
+      filasL.push([o.fecha?{d:o.fecha}:"", o.empresa||"", o.nif||"", o.codemp||"", o.cprod||"", o.gestor||"", o.cp||"", o.poblacion||"",
         parseInt(l.uds)||0, nombreCont(contById(l.cont), l.residuo), l.residuo||"",
         poli? (FREC_TXT[l.frec]||l.frec||"") : "", poli&&l.frec==="SEMANAL"? (parseInt(l.nsem)||1) : "",
         poli? num(l.precio) : "", poli? "" : num(l.cambio), poli? "" : num(l.retirada), poli? "" : num(l.eliminacion),
