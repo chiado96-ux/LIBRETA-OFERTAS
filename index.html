@@ -28,8 +28,10 @@
   body,header,.card{transition:background-color .3s}
   body.est-enviada{--bg:#d9eedf;--card:#ecf7ef;--line:#c3dccb}
   body.est-no{--bg:#f6dcd7;--card:#fbebe8;--line:#e8c6c0}
+  body.est-bloq{--bg:#faf1d4;--card:#fdf8e9;--line:#eadfb6}
   body.est-enviada header{background:rgba(217,238,223,.94)}
   body.est-no header{background:rgba(246,220,215,.94)}
+  body.est-bloq header{background:rgba(250,241,212,.94)}
   /* ---------- Barra superior ---------- */
   header{position:fixed;top:0;left:0;right:0;z-index:20;background:rgba(244,245,243,.92);backdrop-filter:saturate(180%) blur(12px);
     border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top) + 8px) var(--hpad,16px) 8px}
@@ -199,6 +201,10 @@
   .estado button{height:64px;border-radius:14px;border:2px solid var(--line);background:#fbfbfa;display:flex;align-items:center;justify-content:center;gap:12px;font-weight:600;font-size:16px;transition:.15s}
   .estado button .ic{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid currentColor}
   .estado button svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+  .estado{grid-template-columns:1fr 1fr}
+  .estado .bloq{grid-column:1/-1;color:#9a6b00}
+  .estado .bloq.on{background:#c8921a;border-color:#c8921a;color:#fff}
+  .estado .bloq.on .ic{color:#9a6b00}
   .estado .no{color:var(--danger)}
   .estado .si{color:var(--accent)}
   .estado .no.on{background:var(--danger);border-color:var(--danger);color:#fff}
@@ -209,6 +215,7 @@
   .tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:8px;white-space:nowrap}
   .tag.no{background:#fbe9e5;color:var(--danger)}
   .tag.si{background:var(--accent-soft);color:var(--accent)}
+  .tag.bloq{background:#fbf0d0;color:#8a6a1a}
   .subt{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--accent);border-top:1px solid var(--line);padding-top:12px;margin-top:2px}
   .subt .chk{display:inline-flex;align-items:center;gap:8px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--muted);font-size:13px;cursor:pointer}
   .subt .chk input{width:22px;height:22px;accent-color:var(--accent);margin:0}
@@ -431,7 +438,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v4.7</div>
+    <div class="lfoot">v4.8</div>
   </div>
 </div>
 <header>
@@ -535,6 +542,7 @@
     <div class="estado">
       <button type="button" class="no" id="estNo"><span class="ic"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span>No interesado</button>
       <button type="button" class="si" id="estSi"><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></span>Interesado</button>
+      <button type="button" class="bloq" id="estBloq"><span class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>Gestor bloqueado</button>
     </div>
     <div class="hint" id="meta"></div>
   </section>
@@ -637,7 +645,7 @@
     <div class="body">
       <input class="search" id="q" placeholder="Nombre, código postal, población u observaciones" autocomplete="off" autocorrect="off">
       <div class="chips" id="fEstado" style="margin-top:10px">
-        <button type="button" data-e="" class="on">Todos</button><button type="button" data-e="no">✕ No interesados</button><button type="button" data-e="si">✓ Interesados</button><button type="button" data-e="pend">Sin decidir</button><button type="button" data-e="sinenviar">📤 Sin enviar</button>
+        <button type="button" data-e="" class="on">Todos</button><button type="button" data-e="no">✕ No interesados</button><button type="button" data-e="si">✓ Interesados</button><button type="button" data-e="pend">Sin decidir</button><button type="button" data-e="bloq">🔒 Gestores bloqueados</button><button type="button" data-e="sinenviar">📤 Sin enviar</button>
       </div>
       <div class="r2" style="grid-template-columns:1fr;margin-top:8px"><label>Gestor actual<select id="fGestor"></select></label></div>
       <div class="chips" id="fTipo" style="margin-top:8px">
@@ -1038,14 +1046,14 @@ $("#fLimpiar").addEventListener("click",()=>{ $("#fDesde").value=""; $("#fHasta"
 function renderResults(qraw){
   const q=norm(qraw.trim()); const ul=$("#results"); const d1=$("#fDesde").value, d2=$("#fHasta").value;
   const okGestor=o=>{ if(!fGestor) return true; const g=norm((o.gestor||"").trim()); return fGestor==="__sin__"? !g : g===fGestor; };
-  const okEstado=o=>{ if(fEst==="") return true; if(fEst==="pend") return !o.estado; if(fEst==="sinenviar") return !o.enviada && o.estado!=="no"; return o.estado===fEst; };
+  const okEstado=o=>{ if(fEst==="") return true; if(fEst==="pend") return !o.estado; if(fEst==="sinenviar") return !o.enviada && o.estado!=="no" && o.estado!=="bloq"; return o.estado===fEst; };
   let list = ofertas.map((o,i)=>({o,i})).filter(({o})=> enRango(o,d1,d2) && (fTipo==="" || o.empresaTipo===fTipo) && okGestor(o) && okEstado(o) ).filter(({o})=> !q || norm(o.empresa).includes(q) || norm(o.cp).includes(q) || norm(o.poblacion).includes(q) || norm(o.nif).includes(q) || norm(o.codemp).includes(q) || norm(o.cnae).includes(q) || norm(o.gestor).includes(q) || norm(o.cprod).includes(q) || norm(o.cpF).includes(q) || norm(o.poblacionF).includes(q) || norm(o.contacto).includes(q) || (o.entradas||[]).some(e=>norm(e.texto).includes(q)));
   list.sort((a,b)=> new Date(b.o.modificada)-new Date(a.o.modificada));
   if(!list.length){ ul.innerHTML=`<li class="empty" style="display:block;border:none">Sin resultados${q?` para «${esc(qraw)}»`:""}${fTipo?" en "+(fTipo==="RVERD"?"R. VERD":"DICIMO"):""}${fGestor?" con ese gestor":""}${(d1||d2)?" en esas fechas":""}${fEst?" con ese estado":""}</li>`; return; }
   // en búsqueda por fechas, mostrar la fecha que coincide
   const fechaMostrar=o=>{ if(!d1&&!d2) return new Date(o.modificada).toLocaleDateString("es-ES"); const fs=[{f:o.fecha,t:"oferta"},{f:dia(o.creada),t:"creada"},...(o.entradas||[]).map(e=>({f:dia(e.fecha),t:"observación"})),{f:dia(o.modificada),t:"modificada"}].filter(x=>x.f&&(!d1||x.f>=d1)&&(!d2||x.f<=d2)); return fs.length? `${new Date(fs[0].f+"T00:00").toLocaleDateString("es-ES")} · ${fs[0].t}`:""; };
   ul.innerHTML = list.map(({o,i})=>{ const t=calcular(o); return `<li data-i="${i}">
-      <div><div class="n">${hl(o.empresa||"(sin nombre)",q)} ${o.enviada?'<span class="tag si" title="Enviada">✓ Enviada</span>':""} ${o.estado==="no"?'<span class="tag no">✕ No interesado</span>':o.estado==="si"?'<span class="tag si">✓ Interesado</span>':""}</div><div class="m">${o.empresaTipo?`<b style="color:${o.empresaTipo==="RVERD"?"#15803d":"#1d4ed8"}">${o.empresaTipo==="RVERD"?"R. VERD":"DICIMO"}</b> · `:""}${hl(o.cp,q)} ${hl(o.poblacion,q)} ${o.contacto?"· "+esc(o.contacto):""}</div></div>
+      <div><div class="n">${hl(o.empresa||"(sin nombre)",q)} ${o.enviada?'<span class="tag si" title="Enviada">✓ Enviada</span>':""} ${o.estado==="no"?'<span class="tag no">✕ No interesado</span>':o.estado==="si"?'<span class="tag si">✓ Interesado</span>':o.estado==="bloq"?'<span class="tag bloq">🔒 Gestor bloqueado</span>':""}</div><div class="m">${o.empresaTipo?`<b style="color:${o.empresaTipo==="RVERD"?"#15803d":"#1d4ed8"}">${o.empresaTipo==="RVERD"?"R. VERD":"DICIMO"}</b> · `:""}${hl(o.cp,q)} ${hl(o.poblacion,q)} ${o.contacto?"· "+esc(o.contacto):""}</div></div>
       <div style="text-align:right"><div class="n">${eur(t.total)}</div><div class="m">${fechaMostrar(o)}</div></div></li>`; }).join("");
 }
 $("#results").addEventListener("click",e=>{ const li=e.target.closest("li[data-i]"); if(!li) return; close("#mSearch"); go(+li.dataset.i, +li.dataset.i>idx?1:-1); });
@@ -1066,7 +1074,7 @@ function renderTodas(){
   $("#todasN").textContent=`(${list.length}${letraTodas?" de "+ofertas.length:""})`;
   if(!list.length){ $("#todasList").innerHTML=`<li class="empty" style="display:block;border:none">No hay ofertas${letraTodas?" que empiecen por «"+letraTodas+"»":""}</li>`; return; }
   $("#todasList").innerHTML=list.map(({o,i})=>{ const t=calcular(o); return `<li data-i="${i}">
-      <div><div class="n">${esc(o.empresa||"(sin nombre)")} ${o.enviada?'<span class="tag si">✓ Enviada</span>':""} ${o.estado==="no"?'<span class="tag no">✕ No interesado</span>':o.estado==="si"?'<span class="tag si">✓ Interesado</span>':""}</div>
+      <div><div class="n">${esc(o.empresa||"(sin nombre)")} ${o.enviada?'<span class="tag si">✓ Enviada</span>':""} ${o.estado==="no"?'<span class="tag no">✕ No interesado</span>':o.estado==="si"?'<span class="tag si">✓ Interesado</span>':o.estado==="bloq"?'<span class="tag bloq">🔒 Gestor bloqueado</span>':""}</div>
       <div class="m">${esc([o.cp,o.poblacion].filter(Boolean).join(" "))}${o.contacto?" · "+esc(o.contacto):""}${o.empresaTipo?" · "+(o.empresaTipo==="RVERD"?"R. VERD":"DICIMO"):""}${o.gestor?" · Gestor: "+esc(o.gestor):""}</div></div>
       <div style="text-align:right"><div class="n">${eur(t.total)}</div><div class="m">${o.fecha? new Date(o.fecha+"T00:00").toLocaleDateString("es-ES"):""}</div></div></li>`; }).join("");
 }
@@ -1083,8 +1091,8 @@ function abrirResumen(){
   const hoy=hoyISO(); const mes=hoy.slice(0,7);
   const reales=ofertas.filter(o=>(o.empresa||"").trim());
   const delMes=reales.filter(o=>(o.fecha||"").slice(0,7)===mes);
-  const sinEnviar=reales.filter(o=>!o.enviada && o.estado!=="no");
-  const inter=reales.filter(o=>o.estado==="si"), no=reales.filter(o=>o.estado==="no"), sinDec=reales.filter(o=>!o.estado);
+  const sinEnviar=reales.filter(o=>!o.enviada && o.estado!=="no" && o.estado!=="bloq");
+  const inter=reales.filter(o=>o.estado==="si"), no=reales.filter(o=>o.estado==="no"), bloq=reales.filter(o=>o.estado==="bloq"), sinDec=reales.filter(o=>!o.estado);
   const sum=l=>l.reduce((a,o)=>a+calcular(o).total,0);
   const porEmpresa=t=>reales.filter(o=>o.empresaTipo===t).length;
   const avisosPend=avisos.filter(a=>!a.hecho).length, avisosVenc=avisos.filter(vencido).length;
@@ -1100,10 +1108,12 @@ function abrirResumen(){
     <div class="resfila"><span>Ofertas de clientes interesados</span><span>${eur(sum(inter))}</span></div>
     <div class="resfila"><span>Pendientes de enviar</span><span>${eur(sum(sinEnviar))}</span></div>
     <div class="resfila"><span>Sin decidir</span><span>${eur(sum(sinDec))}</span></div>
+    <div class="resfila"><span>Bloqueados (a recuperar)</span><span>${eur(sum(bloq))}</span></div>
     <div class="resfila"><span>Total de la libreta</span><span>${eur(sum(reales))}</span></div>
     <div class="resh">Situación</div>
     <div class="resfila"><span>Enviadas al cliente</span><span>${reales.filter(o=>o.enviada).length}</span></div>
     <div class="resfila"><span>No interesados</span><span>${no.length}</span></div>
+    <div class="resfila"><span>Gestor bloqueado</span><span>${bloq.length}</span></div>
     <div class="resfila"><span>Sin decidir</span><span>${sinDec.length}</span></div>
     <div class="resfila"><span>DICIMO · R. VERD · sin asignar</span><span>${porEmpresa("DICIMO")} · ${porEmpresa("RVERD")} · ${reales.filter(o=>!o.empresaTipo).length}</span></div>
     <div class="resh">Avisos</div>
@@ -1214,7 +1224,7 @@ async function exportarExcel(modo){
     filasO.push([o.fecha?{d:o.fecha}:"", o.empresaTipo==="RVERD"?"R. VERD":(o.empresaTipo==="DICIMO"?"DICIMO":""), o.empresa||"", o.nif||"", o.codemp||"", o.cnae||"", o.cprod||"", o.gestor||"",
       o.calle||"", o.numero||"", o.cp||"", o.poblacion||"", o.provincia||"",
       o.calleF||"", o.numeroF||"", o.cpF||"", o.poblacionF||"", o.provinciaF||"", o.telefono||"", o.email||"", o.contacto||"",
-      o.estado==="no"?"NO INTERESADO":(o.estado==="si"?"INTERESADO":""), o.enviada?"SÍ":"NO", (o.lineas||[]).length, t.uds, descripcionOferta(o),
+      o.estado==="no"?"NO INTERESADO":(o.estado==="si"?"INTERESADO":(o.estado==="bloq"?"GESTOR BLOQUEADO":"")), o.enviada?"SÍ":"NO", (o.lineas||[]).length, t.uds, descripcionOferta(o),
       r2(t.serv), r2(t.cajas), num(o.alquiler), r2(t.alq), r2(t.hoja), r2(t.sup), r2(t.total), (fotosPorOferta[o.id]||0), obs,
       o.creada? new Date(o.creada).toLocaleString("es-ES"):"", o.modificada? new Date(o.modificada).toLocaleString("es-ES"):""]);
     (o.lineas||[]).forEach(l=>{
@@ -1297,7 +1307,7 @@ $("#dupAviso").addEventListener("click",e=>{ const b=e.target.closest("[data-i]"
 /* =========================================================
    EMPRESA: DICIMO / R. VERD
    ========================================================= */
-function renderFondo(){ const o=ofertas[idx]; document.body.classList.toggle("est-no",o.estado==="no"); document.body.classList.toggle("est-enviada",o.estado!=="no"&&!!o.enviada); }
+function renderFondo(){ const o=ofertas[idx]; document.body.classList.toggle("est-no",o.estado==="no"); document.body.classList.toggle("est-bloq",o.estado==="bloq"); document.body.classList.toggle("est-enviada",!o.estado&&!!o.enviada); }
 function renderEmpresaTipo(){ const o=ofertas[idx]; renderFondo(); $("#empDicimo").classList.toggle("on",o.empresaTipo==="DICIMO"); $("#empRverd").classList.toggle("on",o.empresaTipo==="RVERD"); $("#btnEnviada").classList.toggle("on",!!o.enviada); }
 $("#btnEnviada").addEventListener("click",()=>{ const o=ofertas[idx]; o.enviada=!o.enviada; touch(); renderEmpresaTipo(); save();
   if(!o.enviada){ toast("Desmarcada: oferta no enviada"); return; }
@@ -1328,12 +1338,15 @@ $("#obsAdd").addEventListener("click",()=>{ const t=$("#obsNew").value.trim(); i
   ofertas[idx].entradas.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), fecha:new Date().toISOString(), texto:t}); touch(); renderEntradas(); save(); toast("Observación añadida"); });
 $("#entradas").addEventListener("click",e=>{ const b=e.target.closest("[data-del]"); if(!b) return; const row=b.closest(".entrada"); const o=ofertas[idx];
   $("#confirmTitle").textContent="Eliminar observación"; $("#confirmText").textContent="Se eliminará esta entrada de observaciones."; $("#confirmGo").dataset.mode="entrada"; $("#confirmGo").dataset.id=row.dataset.id; open("#mConfirm"); });
-function renderEstado(){ const o=ofertas[idx]; $("#estNo").classList.toggle("on",o.estado==="no"); $("#estSi").classList.toggle("on",o.estado==="si");
-  const t=$("#tagEstado"); t.className="tag"+(o.estado?" on "+o.estado:""); t.textContent=o.estado==="no"?"✕ No interesado":o.estado==="si"?"✓ Interesado":""; t.dataset.s=o.estado==="no"?"✕":"✓"; }
+function renderEstado(){ const o=ofertas[idx]; $("#estNo").classList.toggle("on",o.estado==="no"); $("#estSi").classList.toggle("on",o.estado==="si"); $("#estBloq").classList.toggle("on",o.estado==="bloq");
+  const t=$("#tagEstado"); t.className="tag"+(o.estado?" on "+o.estado:""); t.textContent=o.estado==="no"?"✕ No interesado":o.estado==="si"?"✓ Interesado":o.estado==="bloq"?"🔒 Gestor bloqueado":""; t.dataset.s=o.estado==="no"?"✕":o.estado==="bloq"?"🔒":"✓"; }
 function setEstado(v){ const o=ofertas[idx]; o.estado = o.estado===v? null : v; touch(); renderEstado(); renderFondo(); save();
-  if(o.estado==="no"){ $("#obsNew").placeholder="Motivo por el que no está interesado…"; $("#obsNew").focus(); } else { $("#obsNew").placeholder="Nueva observación: notas de la visita, condiciones, motivo…"; } }
+  if(o.estado==="no"){ $("#obsNew").placeholder="Motivo por el que no está interesado…"; $("#obsNew").focus(); }
+  else if(o.estado==="bloq"){ $("#obsNew").placeholder="¿Hasta cuándo está bloqueado? ¿Con qué gestor?…"; $("#obsNew").focus(); }
+  else { $("#obsNew").placeholder="Nueva observación: notas de la visita, condiciones, motivo…"; } }
 $("#estNo").addEventListener("click",()=>setEstado("no"));
 $("#estSi").addEventListener("click",()=>setEstado("si"));
+$("#estBloq").addEventListener("click",()=>setEstado("bloq"));
 
 /* =========================================================
    FOTOS: interfaz
