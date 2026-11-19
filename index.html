@@ -438,7 +438,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v5.0</div>
+    <div class="lfoot">v5.1</div>
   </div>
 </div>
 <header>
@@ -645,7 +645,7 @@
     <div class="body">
       <input class="search" id="q" placeholder="Nombre, código postal, población u observaciones" autocomplete="off" autocorrect="off">
       <div class="chips" id="fEstado" style="margin-top:10px">
-        <button type="button" data-e="" class="on">Todos</button><button type="button" data-e="no">✕ No interesados</button><button type="button" data-e="si">✓ Interesados</button><button type="button" data-e="pend">Sin decidir</button><button type="button" data-e="bloq">🔒 Gestores bloqueados</button><button type="button" data-e="sinenviar">📤 Sin enviar</button>
+        <button type="button" data-e="" class="on">Todos</button><button type="button" data-e="no">✕ No interesados</button><button type="button" data-e="si">✓ Interesados</button><button type="button" data-e="pend">Sin decidir</button><button type="button" data-e="bloq">🔒 Gestores bloqueados</button><button type="button" data-e="enviadas">✓ Enviadas</button><button type="button" data-e="sinenviar">📤 Sin enviar</button>
       </div>
       <div class="r2" style="grid-template-columns:1fr;margin-top:8px"><label>Gestor actual<select id="fGestor"></select></label></div>
       <div class="chips" id="fTipo" style="margin-top:8px">
@@ -1059,7 +1059,7 @@ function hl(text,q){ if(!q) return esc(text); const n=norm(text), i=n.indexOf(q)
 let fEst="", fTipo="", fGestor="";
 const dia = iso => (iso||"").slice(0,10);
 $("#fTipo").addEventListener("click",e=>{ const b=e.target.closest("[data-t]"); if(!b) return; fTipo=b.dataset.t; document.querySelectorAll("#fTipo button").forEach(x=>x.classList.toggle("on",x===b)); renderResults($("#q").value); });
-function enRango(o, d1, d2){ if(!d1&&!d2) return true; const fechas=[o.fecha,dia(o.creada),dia(o.modificada),...(o.entradas||[]).map(e=>dia(e.fecha))].filter(Boolean);
+function enRango(o, d1, d2){ if(!d1&&!d2) return true; if(fEst==="enviadas" && o.enviadaEl) return (!d1||o.enviadaEl>=d1) && (!d2||o.enviadaEl<=d2); const fechas=[o.fecha,dia(o.creada),dia(o.modificada),...(o.entradas||[]).map(e=>dia(e.fecha))].filter(Boolean);
   return fechas.some(f=> (!d1||f>=d1) && (!d2||f<=d2)); }
 $("#fEstado").addEventListener("click",e=>{ const b=e.target.closest("[data-e]"); if(!b) return; fEst=b.dataset.e; document.querySelectorAll("#fEstado button").forEach(x=>x.classList.toggle("on",x===b)); renderResults($("#q").value); });
 $("#fGestor").addEventListener("change",()=>renderResults($("#q").value));
@@ -1072,12 +1072,12 @@ $("#fLimpiar").addEventListener("click",()=>{ $("#fDesde").value=""; $("#fHasta"
 function renderResults(qraw){
   const q=norm(qraw.trim()); const ul=$("#results"); const d1=$("#fDesde").value, d2=$("#fHasta").value;
   const okGestor=o=>{ if(!fGestor) return true; const g=norm((o.gestor||"").trim()); return fGestor==="__sin__"? !g : g===fGestor; };
-  const okEstado=o=>{ if(fEst==="") return true; if(fEst==="pend") return !o.estado; if(fEst==="sinenviar") return !o.enviada && o.estado!=="no" && o.estado!=="bloq"; return o.estado===fEst; };
+  const okEstado=o=>{ if(fEst==="") return true; if(fEst==="pend") return !o.estado; if(fEst==="enviadas") return !!o.enviada; if(fEst==="sinenviar") return !o.enviada && o.estado!=="no" && o.estado!=="bloq"; return o.estado===fEst; };
   let list = ofertas.map((o,i)=>({o,i})).filter(({o})=> enRango(o,d1,d2) && (fTipo==="" || o.empresaTipo===fTipo) && okGestor(o) && okEstado(o) ).filter(({o})=> !q || norm(o.empresa).includes(q) || norm(o.cp).includes(q) || norm(o.poblacion).includes(q) || norm(o.nif).includes(q) || norm(o.codemp).includes(q) || norm(o.cnae).includes(q) || norm(o.gestor).includes(q) || norm(o.cprod).includes(q) || norm(o.cpF).includes(q) || norm(o.poblacionF).includes(q) || norm(o.contacto).includes(q) || (o.entradas||[]).some(e=>norm(e.texto).includes(q)));
   list.sort((a,b)=> new Date(b.o.modificada)-new Date(a.o.modificada));
   if(!list.length){ ul.innerHTML=`<li class="empty" style="display:block;border:none">Sin resultados${q?` para «${esc(qraw)}»`:""}${fTipo?" en "+(fTipo==="RVERD"?"R. VERD":"DICIMO"):""}${fGestor?" con ese gestor":""}${(d1||d2)?" en esas fechas":""}${fEst?" con ese estado":""}</li>`; return; }
   // en búsqueda por fechas, mostrar la fecha que coincide
-  const fechaMostrar=o=>{ if(!d1&&!d2) return new Date(o.modificada).toLocaleDateString("es-ES"); const fs=[{f:o.fecha,t:"oferta"},{f:dia(o.creada),t:"creada"},...(o.entradas||[]).map(e=>({f:dia(e.fecha),t:"observación"})),{f:dia(o.modificada),t:"modificada"}].filter(x=>x.f&&(!d1||x.f>=d1)&&(!d2||x.f<=d2)); return fs.length? `${new Date(fs[0].f+"T00:00").toLocaleDateString("es-ES")} · ${fs[0].t}`:""; };
+  const fechaMostrar=o=>{ if(fEst==="enviadas" && o.enviadaEl) return new Date(o.enviadaEl+"T00:00").toLocaleDateString("es-ES")+" · enviada"; if(!d1&&!d2) return new Date(o.modificada).toLocaleDateString("es-ES"); const fs=[{f:o.fecha,t:"oferta"},{f:dia(o.creada),t:"creada"},...(o.entradas||[]).map(e=>({f:dia(e.fecha),t:"observación"})),{f:dia(o.modificada),t:"modificada"}].filter(x=>x.f&&(!d1||x.f>=d1)&&(!d2||x.f<=d2)); return fs.length? `${new Date(fs[0].f+"T00:00").toLocaleDateString("es-ES")} · ${fs[0].t}`:""; };
   ul.innerHTML = list.map(({o,i})=>{ const t=calcular(o); return `<li data-i="${i}">
       <div><div class="n">${hl(o.empresa||"(sin nombre)",q)} ${o.enviada?'<span class="tag si" title="Enviada">✓ Enviada</span>':""} ${o.estado==="no"?'<span class="tag no">✕ No interesado</span>':o.estado==="si"?'<span class="tag si">✓ Interesado</span>':o.estado==="bloq"?'<span class="tag bloq">🔒 Gestor bloqueado</span>':""}</div><div class="m">${o.empresaTipo?`<b style="color:${o.empresaTipo==="RVERD"?"#15803d":"#1d4ed8"}">${o.empresaTipo==="RVERD"?"R. VERD":"DICIMO"}</b> · `:""}${hl(o.cp,q)} ${hl(o.poblacion,q)} ${o.contacto?"· "+esc(o.contacto):""}</div></div>
       <div style="text-align:right"><div class="n">${eur(t.total)}</div><div class="m">${fechaMostrar(o)}</div></div></li>`; }).join("");
@@ -1240,7 +1240,7 @@ function descripcionOferta(o){
 }
 async function exportarExcel(modo){
   const CAB_O=["Fecha","Empresa comercializadora","Nombre de la empresa","NIF","Cód. empresa","CNAE","C. productor","Gestor actual","Calle (centro productor)","Número (centro productor)","C.P. (centro productor)","Población (centro productor)","Provincia (centro productor)","Calle (fiscal)","Número (fiscal)","C.P. (fiscal)","Población (fiscal)","Provincia (fiscal)","Teléfono","Email","Persona de contacto",
-    "Estado","Enviada","Nº de líneas","Total contenedores","Descripción de la oferta","Total servicios (€)","Total cajas/cubas (€)","Alquiler unitario (€)","Total alquiler (€)","Hoja de seguimiento (€)","Gestión NP (€)","TOTAL (€)","Nº de fotos","Observaciones","Creada","Última modificación"];
+    "Estado","Enviada","Nº de líneas","Total contenedores","Descripción de la oferta","Total servicios (€)","Total cajas/cubas (€)","Alquiler unitario (€)","Total alquiler (€)","Hoja de seguimiento (€)","Gestión NP (€)","TOTAL (€)","Nº de fotos","Observaciones","Creada","Última modificación","Fecha de envío"];
   const CAB_L=["Fecha","Nombre de la empresa","NIF","Cód. empresa","C. productor","Gestor actual","C.P. (centro productor)","Población (centro productor)","Unidades","Contenedor","Residuo","Servicio","Vaciadas/semana","Precio vaciada (€)","Cambio (€)","Retirada definitiva (€)","Eliminación residuo (€)","Subtotal mes (€)"];
   const filasO=[CAB_O], filasL=[CAB_L];
   const r2=n=>Math.round((n+Number.EPSILON)*100)/100;
@@ -1252,7 +1252,7 @@ async function exportarExcel(modo){
       o.calleF||"", o.numeroF||"", o.cpF||"", o.poblacionF||"", o.provinciaF||"", o.telefono||"", o.email||"", o.contacto||"",
       o.estado==="no"?"NO INTERESADO":(o.estado==="si"?"INTERESADO":(o.estado==="bloq"?"GESTOR BLOQUEADO":"")), o.enviada?"SÍ":"NO", (o.lineas||[]).length, t.uds, descripcionOferta(o),
       r2(t.serv), r2(t.cajas), num(o.alquiler), r2(t.alq), r2(t.hoja), r2(t.sup), r2(t.total), (fotosPorOferta[o.id]||0), obs,
-      o.creada? new Date(o.creada).toLocaleString("es-ES"):"", o.modificada? new Date(o.modificada).toLocaleString("es-ES"):""]);
+      o.creada? new Date(o.creada).toLocaleString("es-ES"):"", o.modificada? new Date(o.modificada).toLocaleString("es-ES"):"", (o.enviada&&o.enviadaEl)?{d:o.enviadaEl}:""]);
     (o.lineas||[]).forEach(l=>{
       const poli=esPolietileno(l.cont);
       filasL.push([o.fecha?{d:o.fecha}:"", o.empresa||"", o.nif||"", o.codemp||"", o.cprod||"", o.gestor||"", o.cp||"", o.poblacion||"",
@@ -1337,7 +1337,7 @@ $("#dupAviso").addEventListener("click",e=>{ const b=e.target.closest("[data-i]"
    ========================================================= */
 function renderFondo(){ const o=ofertas[idx]; document.body.classList.toggle("est-no",o.estado==="no"); document.body.classList.toggle("est-bloq",o.estado==="bloq"); document.body.classList.toggle("est-enviada",!!o.enviada && o.estado!=="no" && o.estado!=="bloq"); }
 function renderEmpresaTipo(){ const o=ofertas[idx]; renderFondo(); $("#empDicimo").classList.toggle("on",o.empresaTipo==="DICIMO"); $("#empRverd").classList.toggle("on",o.empresaTipo==="RVERD"); $("#btnEnviada").classList.toggle("on",!!o.enviada); }
-$("#btnEnviada").addEventListener("click",()=>{ const o=ofertas[idx]; o.enviada=!o.enviada; touch(); renderEmpresaTipo(); save();
+$("#btnEnviada").addEventListener("click",()=>{ const o=ofertas[idx]; o.enviada=!o.enviada; o.enviadaEl=o.enviada? hoyISO() : null; touch(); renderEmpresaTipo(); save();
   if(!o.enviada){ toast("Desmarcada: oferta no enviada"); return; }
   const yaHay = avisos.some(a=>!a.hecho && a.ofertaId===o.id);
   if(yaHay){ toast("Marcada como enviada al cliente"); return; }
