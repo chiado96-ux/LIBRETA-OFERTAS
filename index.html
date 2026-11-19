@@ -438,7 +438,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v4.9</div>
+    <div class="lfoot">v5.0</div>
   </div>
 </div>
 <header>
@@ -777,13 +777,38 @@ function load(){
   try{ // migración: datos anteriores a los usuarios pasan a JOSE
     if(usuario==='JOSE' && !localStorage.getItem(KEY) && localStorage.getItem('libreta_ofertas_v1')){ localStorage.setItem(KEY, localStorage.getItem('libreta_ofertas_v1')); }
   }catch(e){}
-  try{ const raw=localStorage.getItem(KEY); if(raw){ const d=JSON.parse(raw); if(Array.isArray(d.ofertas)&&d.ofertas.length){ ofertas=d.ofertas.map(migrar); idx=Math.min(d.idx||0, ofertas.length-1); return; } } }catch(e){ console.warn("No se pudo leer el almacenamiento", e); }
+  try{ const raw=localStorage.getItem(KEY); if(raw){ const d=JSON.parse(raw); borradas=Array.isArray(d.borradas)? d.borradas : []; if(Array.isArray(d.ofertas)&&d.ofertas.length){ ofertas=d.ofertas.map(migrar); idx=Math.min(d.idx||0, ofertas.length-1); return; } } }catch(e){ console.warn("No se pudo leer el almacenamiento", e); }
+  if(!leerAlmacen()) borradas=[];
   ofertas=[nuevaOferta()]; idx=0;
 }
-let saveTimer=null;
+/* --- Guardado seguro: antes de escribir se incorpora lo que otra copia abierta de la app haya guardado --- */
+let borradas=[];                       // ids de ofertas eliminadas (para no resucitarlas al fusionar)
+const revividas=new Set();             // ids restaurados desde una copia: dejan de contar como eliminados
+function leerAlmacen(){ try{ const raw=localStorage.getItem(KEY); if(raw){ const d=JSON.parse(raw); if(d&&Array.isArray(d.ofertas)) return d; } }catch(e){} return null; }
+function fusionar(){
+  const res={cambio:false, actual:false}; if(!usuario) return res;
+  const d=leerAlmacen(); if(!d) return res;
+  const tomb=new Set([...(d.borradas||[]), ...borradas].filter(id=>!revividas.has(id))); borradas=[...tomb].slice(-1000);
+  const actualId=ofertas[idx] && ofertas[idx].id;
+  const pos=new Map(ofertas.map((o,i)=>[o.id,i]));
+  d.ofertas.forEach(r=>{ if(!r||!r.id||tomb.has(r.id)) return;
+    if(!pos.has(r.id)){ ofertas.push(migrar(r)); pos.set(r.id,ofertas.length-1); res.cambio=true; }
+    else { const i=pos.get(r.id); if((r.modificada||"")>(ofertas[i].modificada||"")){ ofertas[i]=migrar(r); res.cambio=true; if(r.id===actualId) res.actual=true; } } });
+  if(ofertas.some(o=>tomb.has(o.id))){ ofertas=ofertas.filter(o=>!tomb.has(o.id)); res.cambio=true; if(tomb.has(actualId)) res.actual=true; }
+  // si la única oferta local era la hoja en blanco inicial y han llegado otras, se descarta
+  if(res.cambio && ofertas.length>1){ const vacia=o=>!(o.empresa||"").trim() && !(o.nif||"").trim() && !(o.entradas||[]).length && (o.lineas||[]).every(l=>!(parseInt(l.uds)||0) && !num(l.precio)) && o.id!==actualId;
+    ofertas=ofertas.filter(o=>!(vacia(o) && !d.ofertas.some(r=>r.id===o.id))); }
+  if(!ofertas.length){ ofertas=[nuevaOferta()]; res.actual=true; }
+  const ni=ofertas.findIndex(o=>o.id===actualId); idx = ni>=0? ni : Math.min(idx, ofertas.length-1);
+  return res;
+}
+let saveTimer=null, sucio=false;
 function save(immediate){
-  clearTimeout(saveTimer);
-  const run=()=>{ try{ localStorage.setItem(KEY, JSON.stringify({ofertas, idx})); flashSaved(); }catch(e){ toast("⚠️ No se pudo guardar. Haz una copia de seguridad."); } };
+  clearTimeout(saveTimer); sucio=true;
+  const run=()=>{ if(!usuario){ sucio=false; return; }
+    try{ const r=fusionar(); localStorage.setItem(KEY, JSON.stringify({ofertas, idx, borradas})); sucio=false; flashSaved();
+      if(r.cambio){ if(r.actual) render(); else $("#counter").textContent=`${idx+1} / ${ofertas.length}`; } }
+    catch(e){ toast("⚠️ No se pudo guardar. Haz una copia de seguridad."); } };
   if(immediate) run(); else saveTimer=setTimeout(run, 300);
 }
 function flashSaved(){ const s=$("#saved"); s.textContent="Guardado"; s.style.opacity=1; setTimeout(()=>s.style.opacity=.35, 1200); }
@@ -1272,7 +1297,8 @@ $("#btnImport").addEventListener("click",()=>$("#fileImport").click());
 $("#fileImport").addEventListener("change",e=>{
   const f=e.target.files[0]; if(!f) return; const r=new FileReader();
   r.onload=()=>{ try{ const d=JSON.parse(r.result); const inc=Array.isArray(d)?d:d.ofertas; if(!Array.isArray(inc)) throw 0;
-      const ids=new Set(ofertas.map(o=>o.id)); let n=0; inc.forEach(o=>{ if(o&&o.id&&!ids.has(o.id)){ ofertas.push(o); n++; } });
+      inc.forEach(o=>{ if(o&&o.id) revividas.add(o.id); }); borradas=borradas.filter(id=>!revividas.has(id));
+      const ids=new Set(ofertas.map(o=>o.id)); let n=0; inc.forEach(o=>{ if(o&&o.id&&!ids.has(o.id)){ ofertas.push(migrar(o)); n++; } });
       if(ofertas.length===1 && !ofertas[0].empresa && n) { ofertas.shift(); }
       if(Array.isArray(d.avisos)){ const ids=new Set(avisos.map(a=>a.id)); d.avisos.forEach(a=>{ if(a&&a.id&&!ids.has(a.id)) avisos.push(a); }); saveAvisos(); }
       if(Array.isArray(d.fotos)){ d.fotos.forEach(f=>{ if(f&&f.id&&f.data) FDB.put({...f, usuario}).catch(()=>{}); }); }
@@ -1287,6 +1313,7 @@ $("#confirmGo").addEventListener("click",async()=>{
   if($("#confirmGo").dataset.mode==="foto"){ try{ await FDB.del(fotoAbierta.id); }catch(e){} fotoAbierta=null; close("#mConfirm"); renderFotos(); toast("Foto eliminada"); return; }
   try{ await FDB.delOferta(ofertas[idx].id); }catch(e){}
   avisos.forEach(a=>{ if(a.ofertaId===ofertas[idx].id) a.ofertaId=null; }); saveAvisos();
+  borradas.push(ofertas[idx].id);
   ofertas.splice(idx,1); if(!ofertas.length) ofertas.push(nuevaOferta()); idx=Math.min(idx,ofertas.length-1); close("#mConfirm"); render(); save(true); toast("Oferta eliminada"); });
 
 /* =========================================================
@@ -1308,7 +1335,7 @@ $("#dupAviso").addEventListener("click",e=>{ const b=e.target.closest("[data-i]"
 /* =========================================================
    EMPRESA: DICIMO / R. VERD
    ========================================================= */
-function renderFondo(){ const o=ofertas[idx]; document.body.classList.toggle("est-no",o.estado==="no"); document.body.classList.toggle("est-bloq",o.estado==="bloq"); document.body.classList.toggle("est-enviada",!o.estado&&!!o.enviada); }
+function renderFondo(){ const o=ofertas[idx]; document.body.classList.toggle("est-no",o.estado==="no"); document.body.classList.toggle("est-bloq",o.estado==="bloq"); document.body.classList.toggle("est-enviada",!!o.enviada && o.estado!=="no" && o.estado!=="bloq"); }
 function renderEmpresaTipo(){ const o=ofertas[idx]; renderFondo(); $("#empDicimo").classList.toggle("on",o.empresaTipo==="DICIMO"); $("#empRverd").classList.toggle("on",o.empresaTipo==="RVERD"); $("#btnEnviada").classList.toggle("on",!!o.enviada); }
 $("#btnEnviada").addEventListener("click",()=>{ const o=ofertas[idx]; o.enviada=!o.enviada; touch(); renderEmpresaTipo(); save();
   if(!o.enviada){ toast("Desmarcada: oferta no enviada"); return; }
@@ -1430,8 +1457,22 @@ $("#fotoDel").addEventListener("click",()=>{ if(!fotoAbierta) return; $("#confir
    AVISOS
    ========================================================= */
 let avisos=[]; let AKEY="";
-function loadAvisos(){ AKEY=KEY+"_avisos"; try{ avisos=JSON.parse(localStorage.getItem(AKEY)||"[]"); }catch(e){ avisos=[]; } }
-function saveAvisos(){ try{ localStorage.setItem(AKEY, JSON.stringify(avisos)); }catch(e){ toast("⚠️ No se pudo guardar el aviso"); } renderBadge(); }
+let avisosBase={};                     // estado de cada aviso la última vez que se leyó o escribió
+const fotoAvisos=()=>{ avisosBase={}; avisos.forEach(a=>{ avisosBase[a.id]=JSON.stringify(a); }); };
+function leerAvisosAlmacen(){ try{ const r=JSON.parse(localStorage.getItem(AKEY)||"[]"); return Array.isArray(r)? r : []; }catch(e){ return []; } }
+function fusionarAvisos(){ if(!usuario||!AKEY) return;
+  const rem=leerAvisosAlmacen(); const remMap=new Map(rem.map(a=>[a.id,a])); const locMap=new Map(avisos.map(a=>[a.id,a])); const out=[];
+  const ids=new Set([...Object.keys(avisosBase), ...remMap.keys(), ...locMap.keys()]);
+  ids.forEach(id=>{ const b=avisosBase[id], l=locMap.get(id), r=remMap.get(id);
+    const lCamb = l? JSON.stringify(l)!==b : b!==undefined;          // cambiado o borrado aquí
+    const rCamb = r? JSON.stringify(r)!==b : b!==undefined;          // cambiado o borrado en la otra copia
+    if(lCamb){ if(l) out.push(l); }                                  // manda lo hecho aquí
+    else if(rCamb){ if(r) out.push(r); }                             // si no, lo de la otra copia
+    else if(l) out.push(l); });
+  avisos=out.sort((x,y)=>(x.creado||"")<(y.creado||"")?-1:1);
+}
+function loadAvisos(){ AKEY=KEY+"_avisos"; avisos=leerAvisosAlmacen(); fotoAvisos(); }
+function saveAvisos(){ try{ fusionarAvisos(); localStorage.setItem(AKEY, JSON.stringify(avisos)); fotoAvisos(); }catch(e){ toast("⚠️ No se pudo guardar el aviso"); } renderBadge(); }
 function vencido(a){ if(a.hecho) return false; const t=hoyISO(); if(a.fecha<t) return true; if(a.fecha>t) return false; if(!a.hora) return true; const n=new Date(); const hm=`${String(n.getHours()).padStart(2,"0")}:${String(n.getMinutes()).padStart(2,"0")}`; return a.hora<=hm; }
 function renderBadge(){ const n=avisos.filter(vencido).length; const b=$("#badge"); b.textContent=n; b.classList.toggle("on",n>0); $("#btnBell").classList.toggle("due",n>0); }
 function fFecha(a){ const d=new Date(a.fecha+"T00:00"); const t=hoyISO(); let s=d.toLocaleDateString("es-ES",{weekday:"short",day:"2-digit",month:"short"}); if(a.fecha===t) s="Hoy"; else { const m=new Date(); m.setDate(m.getDate()+1); if(a.fecha===hoyISO.call(null) ) s="Hoy"; } return s+(a.hora?" · "+a.hora:""); }
@@ -1531,15 +1572,23 @@ $("#btnLogout").addEventListener("click",()=>{ close("#mMenu"); salir(); });
 
 /* Altura real de la cabecera fija -> variable CSS */
 (function(){ const hd=document.querySelector("header"); const set=()=>document.documentElement.style.setProperty("--hh", hd.offsetHeight+"px"); set(); if(window.ResizeObserver) new ResizeObserver(set).observe(hd); window.addEventListener("orientationchange",()=>setTimeout(set,300)); })();
+let haTrabajado=false;
+document.addEventListener("input",()=>{ haTrabajado=true; },true);
 /* Arranque */
 renderUsers();
 (function(){ let prev=null; try{ prev=sessionStorage.getItem("libreta_usuario"); }catch(e){}
   if(prev && USUARIOS.some(u=>u.nombre===prev)) entrar(prev); })();
-window.addEventListener("pagehide",()=>save(true));
+window.addEventListener("pagehide",()=>{ if(sucio) save(true); });
+document.addEventListener("visibilitychange",()=>{ if(document.hidden){ if(sucio) save(true); } else if(usuario){ const r=fusionar(); if(r.cambio){ if(!document.activeElement || !document.activeElement.matches("input,textarea,select")) render(); else $("#counter").textContent=`${idx+1} / ${ofertas.length}`; } fusionarAvisos(); renderBadge(); } });
+window.addEventListener("storage",e=>{ if(!usuario) return;
+  if(e.key===KEY){ const r=fusionar(); if(r.cambio){ if(r.actual && (!document.activeElement || !document.activeElement.matches("input,textarea,select"))) render(); else $("#counter").textContent=`${idx+1} / ${ofertas.length}`; } }
+  if(e.key===AKEY){ fusionarAvisos(); renderBadge(); if($("#mAvisos").classList.contains("open")) renderAvisos(); } });
 if("serviceWorker" in navigator){
   navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(reg=>{ reg.update().catch(()=>{}); }).catch(()=>{});
   let recargado=false;
-  navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(recargado) return; recargado=true; save(true); location.reload(); });
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{ if(recargado) return; recargado=true;
+    if(haTrabajado){ toast("Versión nueva lista: se aplicará la próxima vez que abras la app"); return; }   // nunca recargar a mitad de trabajo
+    if(sucio) save(true); location.reload(); });
 }
 </script>
 </body>
