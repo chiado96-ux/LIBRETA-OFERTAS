@@ -438,7 +438,7 @@
       <button class="ghost" data-k="clear">Borrar</button><button>0</button><button class="ghost" data-k="back">⌫</button>
     </div>
     </div>
-    <div class="lfoot">v4.8</div>
+    <div class="lfoot">v4.9</div>
   </div>
 </div>
 <header>
@@ -927,6 +927,7 @@ $("#mismaDir").addEventListener("change",e=>{ const o=ofertas[idx]; o.mismaDir=e
   touch(); renderDirFiscal(); actualizarMapa(); save();
   toast(o.mismaDir? "La dirección fiscal se completa sola con el centro productor" : "Dirección fiscal independiente");
 });
+const esAndroid=/android/i.test(navigator.userAgent);
 $("#mailto").addEventListener("click",e=>{ e.preventDefault(); if($("#mailto").classList.contains("off")) return; abrirMenuMail(); });
 function abrirMenuMail(){ const o=ofertas[idx]; const to=(o.email||"").trim(); const subj="Oferta gestión de residuos"+(o.empresa?" · "+o.empresa:""); const body="Hola"+(o.contacto?" "+o.contacto:"")+",\n\n";
   const q="?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body); const mailto="mailto:"+to+q;
